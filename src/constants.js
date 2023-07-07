@@ -1,0 +1,17 @@
+export const LIGHT_PARAM = {
+  LIGHT_HEIGHT: 30,
+  LIGHT_ROW: 6,
+  LIGHT_COL: 6,
+  ROW_DISTANCE: 12,
+  COL_DISTANCE: 24,
+};
+export const TABLE_SIZE = {
+  TABLE_HEIGHT: 28.4,
+  TABLE_WIDTH: 14.2,
+  HOLE_SIZE: 0.62,
+  SIDE_THICK: 2.6,
+  WIDTH_CURSOR: 0.4,
+  Z_PARAM: 0.4,
+};
+
+export const BALL_SIZE = 0.59;
