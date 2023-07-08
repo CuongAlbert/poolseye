@@ -29,7 +29,7 @@ const Lights = () => {
   );
   return (
     <>
-      <ambientLight color={0xffffff} intensity={0.8} position={[1, 1, 1]} />
+      <ambientLight color={0xffffff} intensity={0.3} position={[1, 1, 1]} />
       {pointLight.map((pos, idx) => (
         <pointLight
           key={idx}

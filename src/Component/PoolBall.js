@@ -1,24 +1,41 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
-import { CubeTextureLoader, Vector2 } from "three";
+import { CubeTextureLoader, TextureLoader, Vector2 } from "three";
 import { BALL_SIZE } from "../constants";
 
 function PoolBall({ setRef, position, textureURL }) {
+  // const ballTexture = useMemo(() => {
+  //   const path = textureURL.replace(".png", "") + "/";
+  //   return new CubeTextureLoader()
+  //     .setPath(path)
+  //     .load([
+  //       path + "px.png",
+  //       path + "nx.png",
+  //       path + "py.png",
+  //       path + "ny.png",
+  //       path + "pz.png",
+  //       path + "nz.png",
+  //     ]);
+  // }, [textureURL]);
+  // console.log(ballTexture);
+
   const ballTexture = useMemo(
-    () => new CubeTextureLoader().load(textureURL),
+    () => new TextureLoader().load(textureURL),
     [textureURL]
   );
 
-  console.log(ballTexture);
-
   return (
     <mesh ref={setRef} position={position} speed={new Vector2()} castShadow>
-      <sphereGeometry args={[BALL_SIZE, 64, 32]} />
+      <sphereGeometry attach="geometry" args={[BALL_SIZE, 64, 32]} />
       <meshStandardMaterial
+        attach="material"
         color={0xffffff}
-        roughness={0}
-        metalness={0}
-        envMap={ballTexture}
+        roughness={0.4}
+        metalness={0.1}
+        // envMap={ballTexture}
+        // envMapIntensity={1}
+
+        map={ballTexture}
       />
     </mesh>
   );

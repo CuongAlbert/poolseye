@@ -131,7 +131,7 @@ function PoolTable() {
     0.5,
     64
   );
-  const pocketMaterial = new MeshBasicMaterial({ color: "#3333" });
+  const pocketMaterial = new MeshBasicMaterial({ color: "grey" });
   const clothTexture = useLoader(TextureLoader, Cloth);
   const woodTexture = useLoader(TextureLoader, Hardwood);
   const edgeMaterial = new MeshStandardMaterial({ map: woodTexture });
@@ -141,6 +141,7 @@ function PoolTable() {
     <>
       <mesh receiveShadow>
         <boxGeometry
+          attach="geometry"
           args={[
             tableSize.TABLE_WIDTH + 2 * tableSize.WIDTH_CURSOR,
             tableSize.TABLE_HEIGHT + 2 * tableSize.WIDTH_CURSOR,
@@ -148,6 +149,7 @@ function PoolTable() {
           ]}
         />
         <meshStandardMaterial
+          attach="material"
           color={0x42a8ff}
           roughness={0.4}
           bumpScale={1}

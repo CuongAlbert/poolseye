@@ -10,17 +10,16 @@ function Controls() {
 
   useEffect(() => {
     const controls = new OrbitControls(camera, gl.domElement);
-    controls.minDistance = 5;
-    controls.maxDistance = 100;
+    controls.minDistance = 10;
+    controls.maxDistance = 50;
     controls.ref = controlsRef;
     controls.args = [camera, gl.domElement];
     controls.args[0].receiveShadow = true;
-    // controls.minPolarAngle = Math.PI / 6;
-    // controls.maxPolarAngle = Math.PI / 2;
+    controls.minPolarAngle = Math.PI / 6;
+    controls.maxPolarAngle = Math.PI / 2;
     controls.panSpeed = 0.4;
     controls.rotateSpeed = 0.4;
     controls.enableZoom = true;
-    console.log(controls);
 
     return () => {
       controls.dispose();

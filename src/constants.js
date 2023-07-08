@@ -14,4 +14,4 @@ export const TABLE_SIZE = {
   Z_PARAM: 0.4,
 };
 
-export const BALL_SIZE = 0.59;
+export const BALL_SIZE = 0.56;
