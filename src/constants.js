@@ -6,12 +6,11 @@ export const LIGHT_PARAM = {
   COL_DISTANCE: 24,
 };
 export const TABLE_SIZE = {
-  TABLE_HEIGHT: 28.4,
-  TABLE_WIDTH: 14.2,
-  HOLE_SIZE: 0.62,
-  SIDE_THICK: 2.6,
-  WIDTH_CURSOR: 0.4,
+  PLAY_FIELD_H: 28.4,
+  PLAY_FIELD_W: 14.2,
+  POCKET_SIZE: 1.17,
+  TOP_RAILS_W: 1.27,
+  CUSHIONS_W: 0.51,
   Z_PARAM: 0.4,
 };
-
-export const BALL_SIZE = 0.56;
+export const BALL_SIZE = 0.57;
