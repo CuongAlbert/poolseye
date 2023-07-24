@@ -39,23 +39,23 @@ export const centerOfTopRailTopY =
   TABLE_SIZE.PLAY_FIELD_H / 2 +
   TABLE_SIZE.CUSHIONS_W +
   TABLE_SIZE.TOP_RAILS_W / 2;
-export const getTopRailSideGeometry = [
+export const getRailSideGeometry = [
   TABLE_SIZE.TOP_RAILS_W,
   topRailSideH,
   TABLE_SIZE.Z_PARAM,
 ];
-export const getTopRailsTopGeometry = [
+export const getRailsTopGeometry = [
   topRailTopW,
   TABLE_SIZE.TOP_RAILS_W,
   TABLE_SIZE.Z_PARAM,
 ];
-export const topRailSideCoordinate = [
+export const railSideCoordinate = [
   [-centerOfTopRailSideX, centerOfTopRailSideY, TABLE_SIZE.Z_PARAM / 2],
   [centerOfTopRailSideX, centerOfTopRailSideY, TABLE_SIZE.Z_PARAM / 2],
   [-centerOfTopRailSideX, -centerOfTopRailSideY, TABLE_SIZE.Z_PARAM / 2],
   [centerOfTopRailSideX, -centerOfTopRailSideY, TABLE_SIZE.Z_PARAM / 2],
 ];
-export const topRailTopCoordinate = [
+export const railTopCoordinate = [
   [0, centerOfTopRailTopY, TABLE_SIZE.Z_PARAM / 2],
   [0, -centerOfTopRailTopY, TABLE_SIZE.Z_PARAM / 2],
 ];
@@ -120,9 +120,20 @@ export const targetPointCoordinate = {
 //     [targetPointCoordinate.topX, -targetPointCoordinate.topY],
 //   ]),
 // };
+
 export const cross = {
   X: TABLE_SIZE.PLAY_FIELD_W / 2 - BALL_DIAMETER / 2,
   Y: TABLE_SIZE.PLAY_FIELD_H / 2 - BALL_DIAMETER / 2,
+};
+export const outside = {
+  X:
+    TABLE_SIZE.PLAY_FIELD_W / 2 +
+    TABLE_SIZE.CUSHIONS_W +
+    TABLE_SIZE.TOP_RAILS_W,
+  Y:
+    TABLE_SIZE.PLAY_FIELD_H / 2 +
+    TABLE_SIZE.CUSHIONS_W +
+    TABLE_SIZE.TOP_RAILS_W,
 };
 export const targetCoordinate = {
   topRight: ["topRight", [cross.X, cross.Y, BALL_DIAMETER / 2]],
@@ -141,6 +152,6 @@ export const targetCoordinate = {
 //   sideLeft: [-targetPointCoordinate.sideX, 0, BALL_SIZE / 2],
 // };
 
-export const possibleAngle =
+export const sidePocketPossibleAngle =
   90 -
   angleToDegrees(Math.asin(BALL_DIAMETER / (TABLE_SIZE.POCKET_SIZE + 0.2)));

@@ -3,7 +3,7 @@ import { useLoader } from "react-three-fiber";
 import { TextureLoader, MeshStandardMaterial } from "three";
 import { TABLE_SIZE } from "../constants";
 import Cloth from "../Asset/textures/cloth.jpg";
-import TopRails from "./TopRails";
+import TopRails from "./Rails";
 import Pocket from "./Pocket";
 
 function PoolTable() {

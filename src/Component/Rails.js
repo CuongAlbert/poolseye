@@ -1,5 +1,5 @@
 import { useLoader } from "react-three-fiber";
-import { TextureLoader } from "three";
+import { CylinderGeometry, TextureLoader } from "three";
 import Hardwood from "../Asset/textures/hardwood_floor.jpg";
 import Cloth from "../Asset/textures/cloth.jpg";
 import {
@@ -7,10 +7,10 @@ import {
   FACING_ANGLE,
   topRailSideH,
   topRailTopW,
-  getTopRailSideGeometry,
-  getTopRailsTopGeometry,
-  topRailSideCoordinate,
-  topRailTopCoordinate,
+  getRailSideGeometry,
+  getRailsTopGeometry,
+  railSideCoordinate,
+  railTopCoordinate,
   cushion1Coordinate,
   cushion2Coordinate,
   cushion3Coordinate,
@@ -22,19 +22,19 @@ import {
   ExtrudeGeometry,
 } from "three";
 
-const TopRails = function () {
+const Rails = function () {
   // TOP_RAILS:
   const woodTexture = useLoader(TextureLoader, Hardwood);
-  const topRailMaterial = new MeshStandardMaterial({ map: woodTexture });
-  const topRailSideGeometry = new BoxGeometry(
-    getTopRailSideGeometry[0],
-    getTopRailSideGeometry[1],
-    getTopRailSideGeometry[2]
+  const railMaterial = new MeshStandardMaterial({ map: woodTexture });
+  const railSideGeometry = new BoxGeometry(
+    getRailSideGeometry[0],
+    getRailSideGeometry[1],
+    getRailSideGeometry[2]
   );
-  const topRailTopGeometry = new BoxGeometry(
-    getTopRailsTopGeometry[0],
-    getTopRailsTopGeometry[1],
-    getTopRailsTopGeometry[2]
+  const railTopGeometry = new BoxGeometry(
+    getRailsTopGeometry[0],
+    getRailsTopGeometry[1],
+    getRailsTopGeometry[2]
   );
   // CUSHIONS:
   const shape1 = new Shape();
@@ -76,6 +76,13 @@ const TopRails = function () {
     bevelEnabled: false,
   };
   const cushion1Geometry = new ExtrudeGeometry(shape1, extrudeSettings);
+  // const cushion1Geometry = new CylinderGeometry(
+  //   (TABLE_SIZE.CUSHIONS_W * Math.cos((Math.PI / 180) * 60) * 2) / 3,
+  //   (TABLE_SIZE.CUSHIONS_W * Math.cos((Math.PI / 180) * 60) * 2) / 3,
+  //   topRailSideH,
+  //   3
+  // );
+
   const cushion2Geometry = new ExtrudeGeometry(shape2, extrudeSettings);
   const cushion3Geometry = new ExtrudeGeometry(shape3, extrudeSettings);
 
@@ -89,19 +96,15 @@ const TopRails = function () {
 
   return (
     <>
-      {topRailSideCoordinate.map((pos, idx) => (
+      {railSideCoordinate.map((pos, idx) => (
         <mesh
           key={idx}
-          args={[topRailSideGeometry, topRailMaterial]}
+          args={[railSideGeometry, railMaterial]}
           position={pos}
         />
       ))}
-      {topRailTopCoordinate.map((pos, idx) => (
-        <mesh
-          key={idx}
-          args={[topRailTopGeometry, topRailMaterial]}
-          position={pos}
-        />
+      {railTopCoordinate.map((pos, idx) => (
+        <mesh key={idx} args={[railTopGeometry, railMaterial]} position={pos} />
       ))}
       {cushion1Coordinate.map((pos, idx) => (
         <mesh
@@ -131,4 +134,4 @@ const TopRails = function () {
   );
 };
 
-export default TopRails;
+export default Rails;
