@@ -5,7 +5,9 @@ import zero from "../Asset/textures/0.png";
 import ten from "../Asset/textures/10.png";
 import { useThree } from "react-three-fiber";
 import Lines from "../Component/Lines";
-import { getOBAndCBCoordinate } from "../Utils/function";
+import { getOBAndCB } from "../Utils/function";
+import { BALL_DIAMETER } from "../constants";
+import { lineMidpoint } from "geometric";
 function Scene(props) {
   const { camera, gl } = useThree();
 
@@ -17,18 +19,37 @@ function Scene(props) {
     showAimPoint,
     eyeHeight,
     eyeDistance,
+    rotateAngle,
   } = props;
 
-  const [ObjBall, aimPoint, aiming1, aiming2] = useMemo(
-    () => getOBAndCBCoordinate(target, distance, cutAngle, eyeDistance),
+  const [objBall, aimPoint, aiming1, aiming2] = useMemo(
+    () => getOBAndCB(target, distance, cutAngle, eyeDistance),
     [target, distance, cutAngle, eyeDistance]
   );
 
-  const cameraPosition =
+  const [
+    aimingLine,
+    eyePosition,
+    cueBall,
+    minEyeRotatePosition,
+    maxEyeRotatePosition,
+  ] =
     side === "left" && aiming1.aimingLine
-      ? aiming1.eyePosition
+      ? [
+          aiming1.aimingLine,
+          aiming1.eyePosition,
+          aiming1.cueBall,
+          aiming1.minEyeRotatePosition,
+          aiming1.maxEyeRotatePosition,
+        ]
       : side === "right" && aiming2.aimingLine
-      ? aiming2.eyePosition
+      ? [
+          aiming2.aimingLine,
+          aiming2.eyePosition,
+          aiming2.cueBall,
+          aiming2.minEyeRotatePosition,
+          aiming2.maxEyeRotatePosition,
+        ]
       : [0, 0, 7];
 
   gl.setClearColor(0xdddd, 0.3);
@@ -37,35 +58,53 @@ function Scene(props) {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.near = 0.1;
   camera.far = 1000;
-  // camera.setFocalLength(5);
   camera.up.set(0, 0, 1);
-  camera.position.set(
-    cameraPosition[0],
-    cameraPosition[1],
-    1.8 + eyeHeight * 5.2
-  );
-  camera.lookAt(aimPoint[0], aimPoint[1], aimPoint[2]);
+  camera.position.set(eyePosition[0], eyePosition[1], 1.8 + eyeHeight * 5.2);
+
+  [camera.position.y, camera.position.x, camera.position.z] =
+    minEyeRotatePosition[1] < maxEyeRotatePosition[1]
+      ? [
+          eyePosition[1] +
+            rotateAngle * (maxEyeRotatePosition[1] - eyePosition[1]),
+          eyePosition[0] +
+            rotateAngle * (maxEyeRotatePosition[0] - eyePosition[0]),
+          1.8 + eyeHeight * 5.2,
+        ]
+      : [
+          eyePosition[1] +
+            rotateAngle * (minEyeRotatePosition[1] - eyePosition[1]),
+          eyePosition[0] +
+            rotateAngle * (maxEyeRotatePosition[0] - eyePosition[0]),
+          1.8 + eyeHeight * 5.2,
+        ];
+  camera.updateProjectionMatrix();
+
+  // console.log(camera.position);
+  // console.log("cue ball:", cueBall);
+
+  const cueLine = [camera.position.x, camera.position.y, camera.position.z];
+  const cueLineMidPoint = lineMidpoint([cueLine, cueBall]);
+  // console.log("hand:", cueLine);
+  // console.log("eye:", eyePosition);
+  camera.lookAt(...cueBall);
 
   return (
     <React.Suspense>
       <PoolTable />
-      <PoolBall position={ObjBall} textureURL={ten} />
-      {side === "left" && aiming1.cueBall && (
-        <PoolBall position={aiming1.cueBall} textureURL={zero} />
-      )}
-      {side === "right" && aiming2.cueBall && (
-        <PoolBall position={aiming2.cueBall} textureURL={zero} />
-      )}
-      {showAimPoint && <PoolBall position={aimPoint} textureURL={zero} />}
+      <PoolBall position={objBall} textureURL={ten} opacity={1} />
 
-      <Lines start={target[1]} end={ObjBall} />
+      <Lines start={cueLineMidPoint} end={cueBall} />
 
-      {side === "left" && aiming1.aimingLine && (
-        <Lines start={aiming1.aimingLine[0]} end={aiming1.aimingLine[1]} />
+      <PoolBall position={cueBall} textureURL={zero} opacity={1} />
+      {/* <Lines start={objBall} end={cueBall} /> */}
+
+      {showAimPoint && (
+        <PoolBall position={aimPoint} textureURL={zero} opacity={0.4} />
       )}
-      {side === "right" && aiming2.aimingLine && (
-        <Lines start={aiming2.aimingLine[0]} end={aiming2.aimingLine[1]} />
-      )}
+
+      {/* <Lines start={target[1]} end={objBall} /> */}
+
+      {/* <Lines start={aimingLine[0]} end={aimingLine[1]} /> */}
     </React.Suspense>
   );
 }

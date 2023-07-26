@@ -7,9 +7,10 @@ const Adjust = (props) => {
         <input
           className={classes.input}
           type="range"
+          {...props}
           onChange={props.changeValue}
-          min={0}
-          max={1}
+          min={props.min}
+          max={props.max}
           step={0.01}
           value={props.value}
         ></input>

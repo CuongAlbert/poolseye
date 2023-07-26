@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { TextureLoader, Vector2 } from "three";
 import { BALL_DIAMETER } from "../constants";
 
-function PoolBall({ setRef, position, textureURL }) {
+function PoolBall({ setRef, position, textureURL, opacity }) {
   const ballTexture = useMemo(
     () => new TextureLoader().load(textureURL),
     [textureURL]
@@ -18,6 +18,8 @@ function PoolBall({ setRef, position, textureURL }) {
         roughness={0.25}
         metalness={0}
         map={ballTexture}
+        transparent="true"
+        opacity={opacity}
       />
     </mesh>
   );
