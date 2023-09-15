@@ -8,7 +8,7 @@ const Lines = ({ start, end }) => {
 
   return (
     <line geometry={lineGeometry}>
-      <lineBasicMaterial attach="material" color="red" lineWidth={15} />
+      <lineBasicMaterial attach="material" color="blue" lineWidth={0.1} />
     </line>
   );
 };

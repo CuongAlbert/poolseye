@@ -11,7 +11,7 @@ const Adjust = (props) => {
           onChange={props.changeValue}
           min={props.min}
           max={props.max}
-          step={0.01}
+          step={0.001}
           value={props.value}
         ></input>
         <p>{props.value}</p>

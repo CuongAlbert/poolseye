@@ -50,7 +50,7 @@ const Rails = function () {
   const shape2 = new Shape();
   shape2.moveTo(0, 0);
   shape2.lineTo(0, topRailSideH);
-  shape2.lineTo(TABLE_SIZE.CUSHIONS_W, topRailSideH - 0.08);
+  shape2.lineTo(TABLE_SIZE.CUSHIONS_W, topRailSideH - 0.1);
   shape2.lineTo(
     TABLE_SIZE.CUSHIONS_W,
     TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)

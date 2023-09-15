@@ -1,6 +1,6 @@
 import { angleToDegrees } from "geometric";
 
-// 1 = 10cm
+// 1px = 10cm
 export const LIGHT_PARAM = {
   LIGHT_HEIGHT: 30,
   LIGHT_ROW: 6,
@@ -102,24 +102,38 @@ export const targetPointCoordinate = {
   topY: TABLE_SIZE.PLAY_FIELD_H / 2,
 };
 
-// export const targetMidPoint = {
-//   topRight: lineMidpoint([
-//     [targetPointCoordinate.sideX, targetPointCoordinate.sideY],
-//     [targetPointCoordinate.topX, targetPointCoordinate.topY],
-//   ]),
-//   topLeft: lineMidpoint([
-//     [-targetPointCoordinate.sideX, targetPointCoordinate.sideY],
-//     [-targetPointCoordinate.topX, targetPointCoordinate.topY],
-//   ]),
-//   bottomLeft: lineMidpoint([
-//     [-targetPointCoordinate.sideX, -targetPointCoordinate.sideY],
-//     [-targetPointCoordinate.topX, -targetPointCoordinate.topY],
-//   ]),
-//   bottomRight: lineMidpoint([
-//     [targetPointCoordinate.sideX, -targetPointCoordinate.sideY],
-//     [targetPointCoordinate.topX, -targetPointCoordinate.topY],
-//   ]),
-// };
+export const targetLimitPoint = {
+  topRight: [
+    "topRight",
+    [targetPointCoordinate.sideX, targetPointCoordinate.sideY],
+    [targetPointCoordinate.topX, targetPointCoordinate.topY],
+  ],
+  topLeft: [
+    "topLeft",
+    [-targetPointCoordinate.sideX, targetPointCoordinate.sideY],
+    [-targetPointCoordinate.topX, targetPointCoordinate.topY],
+  ],
+  bottomLeft: [
+    "bottomLeft",
+    [-targetPointCoordinate.sideX, -targetPointCoordinate.sideY],
+    [-targetPointCoordinate.topX, -targetPointCoordinate.topY],
+  ],
+  bottomRight: [
+    "bottomRight",
+    [targetPointCoordinate.sideX, -targetPointCoordinate.sideY],
+    [targetPointCoordinate.topX, -targetPointCoordinate.topY],
+  ],
+  sideLeft: [
+    "sideLeft",
+    [-TABLE_SIZE.PLAY_FIELD_W / 2, TABLE_SIZE.POCKET_SIZE / 2 + 0.1],
+    [-TABLE_SIZE.PLAY_FIELD_W / 2, -(TABLE_SIZE.POCKET_SIZE / 2 + 0.1)],
+  ],
+  sideRight: [
+    "sideRight",
+    [TABLE_SIZE.PLAY_FIELD_W / 2, TABLE_SIZE.POCKET_SIZE / 2 + 0.1],
+    [TABLE_SIZE.PLAY_FIELD_W / 2, -(TABLE_SIZE.POCKET_SIZE / 2 + 0.1)],
+  ],
+};
 
 export const cross = {
   X: TABLE_SIZE.PLAY_FIELD_W / 2 - BALL_DIAMETER / 2,
