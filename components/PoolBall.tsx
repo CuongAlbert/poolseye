@@ -26,25 +26,10 @@ function PoolBall({ position, textureURL, opacity }: Props) {
     [textureURL]
   );
 
-  const mesh =
-    useRef<
-      Mesh<
-        BufferGeometry<NormalBufferAttributes>,
-        Material | Material[],
-        Object3DEventMap
-      >
-    >();
-
-  useFrame(() => {
-    if (mesh.current) {
-      mesh.current.rotation.x -= 0.1;
-      // mesh.current.rotation.y += 0.05;
-      // mesh.current.position.z += 0.01;
-    }
-  });
+  const mesh = useRef(null!);
 
   return (
-    <mesh ref={mesh} position={position} speed={new Vector2()} castShadow>
+    <mesh ref={mesh} position={position} castShadow>
       <sphereGeometry attach="geometry" args={[BALL_DIAMETER / 2, 64, 32]} />
 
       <meshStandardMaterial

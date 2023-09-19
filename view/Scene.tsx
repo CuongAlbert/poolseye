@@ -2,38 +2,26 @@ import React, { useRef, useMemo } from "react";
 //import PoolBall from "../Component/PoolBall";
 import PoolTable from "../components/PoolTable";
 import zero from "../assets/textures/0.png";
-import one from "../assets/textures/1.png";
-import two from "../assets/textures/2.png";
-import three from "../assets/textures/3.png";
-import seven from "../assets/textures/7.png";
-import eight from "../assets/textures/8.png";
-import nine from "../assets/textures/9.png";
 import ten from "../assets/textures/10.png";
 import { useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
 import Lines from "../components/Lines";
 
-import {
-  getLimitPosition,
-  getOBAndCB,
-  oneBall,
-  twoBall,
-  threeBall,
-  getRandomOB,
-} from "../utils/function";
+import { getLimitPosition, getOBAndCB } from "../utils/function";
 import {
   BALL_DIAMETER,
   targetCoordinate,
   targetLimitPoint,
 } from "../constants";
 import {
+  Line,
+  Point,
   lineAngle,
   lineLength,
   lineMidpoint,
   pointRotate,
   pointTranslate,
 } from "geometric";
-import { Button, View } from "react-native";
 
 import Animated, {
   useAnimatedGestureHandler,
@@ -44,10 +32,21 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-function Scene(props) {
+export type sceneProps = {
+  target: string;
+  distance: number;
+  cutAngle: number;
+  side: string;
+  showAimPoint: boolean;
+  eyeHeight: number;
+  eyeDistance: number;
+  rotateAngle: number;
+  changeTargetView: number;
+};
+
+function Scene(props: sceneProps) {
   const { camera, gl } = useThree();
   const {
-    ref,
     target,
     distance,
     cutAngle,
@@ -56,49 +55,37 @@ function Scene(props) {
     eyeHeight,
     eyeDistance,
     rotateAngle,
-    cameraLookAt,
     changeTargetView,
   } = props;
 
   const [eyePositionB, objBall, aimPoint, aiming1, aiming2] = useMemo(
-    () =>
-      getOBAndCB(
-        targetCoordinate[target],
-        distance,
-        cutAngle,
-        eyeDistance.value
-      ),
-    [eyePositionB, target, distance, cutAngle, eyeDistance.value]
+    () => getOBAndCB(targetCoordinate[target], distance, cutAngle, eyeDistance),
+    [target, distance, cutAngle, eyeDistance]
   );
 
-  const [aimingLine, eyePosition, cueBall, twoBallAngle, correctEyePosition] =
-    side === "left" && aiming1.aimingLine
-      ? [
-          aiming1.aimingLine,
-          aiming1.eyePosition,
-          aiming1.cueBall,
-          aiming1.twoBallAngle,
-          aiming1.correctEyePosition,
-        ]
-      : side === "right" && aiming2.aimingLine
-      ? [
-          aiming2.aimingLine,
-          aiming2.eyePosition,
-          aiming2.cueBall,
-          aiming2.twoBallAngle,
-          aiming2.correctEyePosition,
-        ]
-      : [0, 0, 7];
+  let aimingLine, eyePosition: Point, cueBall2D: Point, twoBallAngle: number;
+  if (side === "left" && aiming1 !== undefined) {
+    (aimingLine = aiming1.aimingLine),
+      (eyePosition = aiming1.eyePosition),
+      (cueBall2D = aiming1.cueBall2D),
+      (twoBallAngle = aiming1.twoBallAngle);
+  }
+  if (side === "right" && aiming2 !== undefined) {
+    (aimingLine = aiming2.aimingLine),
+      (eyePosition = aiming2.eyePosition),
+      (cueBall2D = aiming2.cueBall2D),
+      (twoBallAngle = aiming2.twoBallAngle);
+  }
 
   const [minTrueEyePosition, minAimPoint] = useMemo(
     () =>
       getLimitPosition(
         targetLimitPoint[target][1],
         objBall,
-        cueBall,
-        eyeDistance.value
+        cueBall2D,
+        eyeDistance
       ),
-    [objBall, cueBall, eyeDistance.value, target]
+    [objBall, eyeDistance, target]
   );
 
   const [maxTrueEyePosition, maxAimPoint] = useMemo(
@@ -106,35 +93,35 @@ function Scene(props) {
       getLimitPosition(
         targetLimitPoint[target][2],
         objBall,
-        cueBall,
-        eyeDistance.value
+        cueBall2D,
+        eyeDistance
       ),
-    [target, objBall, cueBall, eyeDistance.value]
+    [target, objBall, eyeDistance]
   );
-  const eyePositionAndCueBallLength = lineLength([cueBall, eyePosition]);
+  const eyePositionAndCueBallLength = lineLength([cueBall2D, eyePosition]);
 
   const minTrueCameraPosition = pointTranslate(
-    cueBall,
-    lineAngle([cueBall.slice(0, 2), minTrueEyePosition]),
+    cueBall2D,
+    lineAngle([cueBall2D, minTrueEyePosition]),
     eyePositionAndCueBallLength
   );
   const maxTrueCameraPosition = pointTranslate(
-    cueBall,
+    cueBall2D,
     lineAngle([cueBall.slice(0, 2), maxTrueEyePosition]),
     eyePositionAndCueBallLength
   );
 
-  const minLimitEyePosition = pointRotate(
-    eyePosition,
-    -twoBallAngle,
-    cueBall.slice(0, 2)
-  );
+  // const minLimitEyePosition = pointRotate(
+  //   eyePosition,
+  //   -twoBallAngle,
+  //   cueBall.slice(0, 2)
+  // );
 
-  const maxLimitEyePosition = pointRotate(
-    eyePosition,
-    twoBallAngle,
-    cueBall.slice(0, 2)
-  );
+  // const maxLimitEyePosition = pointRotate(
+  //   eyePosition,
+  //   twoBallAngle,
+  //   cueBall.slice(0, 2)
+  // );
 
   const step = useSharedValue(0);
   gl.setClearColor(0x0000, 1);

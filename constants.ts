@@ -1,4 +1,4 @@
-import { angleToDegrees } from "geometric";
+import { Point, angleToDegrees } from "geometric";
 import { Vector3 } from "three";
 
 // 1px = 10cm
@@ -129,7 +129,7 @@ export const targetPointCoordinate = {
   topY: TABLE_SIZE.PLAY_FIELD_H / 2,
 };
 
-export const targetLimitPoint = {
+export const targetLimitPoint: { [key: string]: [string, Point, Point] } = {
   topRight: [
     "topRight",
     [targetPointCoordinate.sideX, targetPointCoordinate.sideY],
@@ -176,25 +176,13 @@ export const outside = {
     TABLE_SIZE.CUSHIONS_W +
     TABLE_SIZE.TOP_RAILS_W,
 };
-export const targetCoordinate = {
-  topRight: ["topRight", new Vector3(cross.X, cross.Y, BALL_DIAMETER / 2)],
-  topLeft: ["topLeft", new Vector3(-cross.X, cross.Y, BALL_DIAMETER / 2)],
-  bottomLeft: [
-    "bottomLeft",
-    new Vector3(-cross.X, -cross.Y, BALL_DIAMETER / 2),
-  ],
-  bottomRight: [
-    "bottomRight",
-    new Vector3(cross.X, -cross.Y, BALL_DIAMETER / 2),
-  ],
-  sideRight: [
-    "sideRight",
-    new Vector3(targetPointCoordinate.sideX, 0, BALL_DIAMETER / 2),
-  ],
-  sideLeft: [
-    "sideLeft",
-    new Vector3(-targetPointCoordinate.sideX, 0, BALL_DIAMETER / 2),
-  ],
+export const targetCoordinate: { [key: string]: [string, Point] } = {
+  topRight: ["topRight", [cross.X, cross.Y]],
+  topLeft: ["topLeft", [-cross.X, cross.Y]],
+  bottomLeft: ["bottomLeft", [cross.X, -cross.Y]],
+  bottomRight: ["bottomRight", [cross.X, -cross.Y]],
+  sideRight: ["sideRight", [targetPointCoordinate.sideX, 0]],
+  sideLeft: ["sideLeft", [-targetPointCoordinate.sideX, 0]],
 };
 // export const targetCoordinate = {
 //   topRight: [...targetMidPoint.topRight, BALL_SIZE / 2],

@@ -1,7 +1,7 @@
 import { useLoader } from "react-three-fiber";
 import { CylinderGeometry, TextureLoader } from "three";
-import Hardwood from "../assets/textures/hardwood_floor.jpg";
-import Cloth from "../assets/textures/cloth.jpg";
+// import Hardwood from "../assets/textures/hardwood_floor.jpg";
+// import Cloth from "../assets/textures/cloth.jpg";
 import {
   TABLE_SIZE,
   FACING_ANGLE,
@@ -20,11 +20,15 @@ import {
   MeshStandardMaterial,
   Shape,
   ExtrudeGeometry,
+  Texture,
 } from "three";
 
 const Rails = function () {
   // TOP_RAILS:
-  const woodTexture = useLoader(TextureLoader, Hardwood);
+  const woodTexture: Texture = useLoader(
+    TextureLoader,
+    "../assets/textures/hardwood_floor.jpg"
+  );
   const railMaterial = new MeshStandardMaterial({ map: woodTexture });
   const railSideGeometry = new BoxGeometry(...getRailSideGeometry);
   const railTopGeometry = new BoxGeometry(...getRailsTopGeometry);
@@ -83,7 +87,7 @@ const Rails = function () {
     roughness: 0.4,
     bumpScale: 1,
   });
-  const clothTexture = useLoader(TextureLoader, Cloth);
+  const clothTexture = useLoader(TextureLoader, "../assets/textures/cloth.jpg");
   clothMaterial.map = clothTexture;
 
   return (

@@ -1,7 +1,7 @@
 import { useLoader } from "@react-three/fiber";
 import React, { useMemo } from "react";
-import Hardwood from "../assets/textures/tablefloor.jpg";
-import Cloth from "../assets/textures/cloth.jpg";
+// import Hardwood from ;
+// import Cloth from ;
 
 import { TextureLoader, Vector2, MeshBasicMaterial, Texture } from "three";
 
@@ -27,13 +27,13 @@ import {
 
 const RailsTable = function () {
   const railMaterial: Texture = useMemo(
-    () => new TextureLoader().load(Hardwood),
-    [Hardwood]
+    () => new TextureLoader().load("../assets/textures/tableFloor.jpg"),
+    ["../assets/textures/tableFloor.jpg"]
   );
 
   const clothMaterial: Texture = useMemo(
-    () => new TextureLoader().load(Cloth),
-    [Cloth]
+    () => new TextureLoader().load("../assets/textures/cloth.jpg"),
+    ["../assets/textures/cloth.jpg"]
   );
 
   const railSideGeometry: BoxGeometry = new BoxGeometry(...getRailSideGeometry);

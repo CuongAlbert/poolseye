@@ -24,10 +24,10 @@ export const randomOB = new Vector3(
 
 // give line, return point of line and out cover line
 export function getCrossPoint(
-  line: [Point, Point],
+  line: Line,
   checkPoint: Point,
   aimPoint: Point
-): [Maybe<Line>, Maybe<Point>] {
+): [Line, Point] {
   const angle = lineAngle(line);
   const aConst = Math.tan(angleToRadians(angle));
   const bConst = line[0][1] - aConst * line[0][0];
@@ -72,33 +72,36 @@ export function getCrossPoint(
     }
   }
 
-  let reverseLine: Maybe<Line>,
-    outsidePoint,
-    lineToCross: Line = [aimPoint, crossPoints[0].value];
+  let lineToCross: Line = [aimPoint, crossPoints[0].value];
   if (pointOnLine(checkPoint, lineToCross, 0.00000001)) {
-    reverseLine = [aimPoint, crossPoints[0].value];
-    // console.log(crossPoints[0].key);
-    outsidePoint = lineCutOutside[crossPoints[0].key];
+    return [
+      [aimPoint, crossPoints[0].value],
+      lineCutOutside[crossPoints[0].key],
+    ];
   } else if (
     pointOnLine(checkPoint, [aimPoint, crossPoints[1].value], 0.0000001)
   ) {
-    reverseLine = [aimPoint, crossPoints[1].value];
-    outsidePoint = lineCutOutside[crossPoints[1].key];
-  } else {
-    reverseLine = undefined;
-    outsidePoint = undefined;
-  }
-  return [reverseLine, outsidePoint];
+    return [
+      [aimPoint, crossPoints[1].value],
+      lineCutOutside[crossPoints[1].key],
+    ];
+  } else
+    return [
+      [
+        [0, 0],
+        [0, 0],
+      ],
+      [0, 0],
+    ];
 }
 
 // give line, return position of camera in line
 
 export const getEyePosition = (
-  line: [Point, Point],
+  line: Line,
   outsidePoint: Point,
   eyeDistance: number
-) => {
-  if (!line[0] || !line[1]) return;
+): Point => {
   const minEyePosition: Point = outsidePoint
     ? pointTranslate(
         outsidePoint,
@@ -107,12 +110,7 @@ export const getEyePosition = (
         // 5 / Math.cos(Math.abs(angleToRadians(angle)))
       )
     : [0, 0];
-  const eyePosition = pointTranslate(
-    minEyePosition,
-    lineAngle(line),
-    eyeDistance * 12
-  );
-  return eyePosition;
+  return pointTranslate(minEyePosition, lineAngle(line), eyeDistance * 12);
 };
 
 export const ChangeEyePosition = (
@@ -154,7 +152,27 @@ export const getOBAndCB = (
   distance: number,
   cutAngle: number,
   eyeDistance: number
-) => {
+): [
+  eyePositionB: Point | undefined,
+  objBall: Point,
+  aimPoint: number[],
+  getAimingLine:
+    | {
+        aimingLine: Line;
+        cueBall2D: Point;
+        eyePosition: Point;
+        twoBallAngle: number;
+      }
+    | undefined,
+  getAimingLine:
+    | {
+        aimingLine: Line;
+        cueBall2D: Point;
+        eyePosition: Point;
+        twoBallAngle: number;
+      }
+    | undefined
+] => {
   // target = bottomLeft -> angleRotate = 0 -> 90
   // target = bottomRight -> angleRotate = 90 -> 180
   // target = topRight -> angleRotate = 180 -> 270
@@ -194,26 +212,41 @@ export const getOBAndCB = (
   );
   const lineOfCenter: Line = [objBall, target[1]];
 
-  const getAimingLine = (angle: number) => {
+  const getAimingLine = (
+    angle: number
+  ): {
+    aimingLine: Line;
+    cueBall2D: Point;
+    eyePosition: Point;
+    twoBallAngle: number;
+  } => {
     const aimingLine2D: Line = lineRotate(lineOfCenter, angle, aimPoint);
     const aimingLineCheckPoint: Point = pointRotate(objBall, angle, aimPoint);
-    const [aimingLine, outsidePoint] = getCrossPoint(
+    const [aimingLine, outsidePoint]: [Line, Point] = getCrossPoint(
       aimingLine2D,
       aimingLineCheckPoint,
       aimPoint
     );
 
     let cueBall2D;
-    if (aimingLine) cueBall2D = lineInterpolate(aimingLine)(0.3);
-
-    const correctEyePosition = getEyePosition(
-      [cueBall2D, aimPoint],
-      outsidePoint,
-      eyeDistance
-    );
+    if (aimingLine)
+      cueBall2D =
+        lineInterpolate(aimingLine)(
+          0.3
+        ); // 0.3 is distance of cueBall and target
+    else
+      return {
+        aimingLine: [
+          [0, 0],
+          [0, 0],
+        ],
+        cueBall2D: [0, 0],
+        eyePosition: [0, 0],
+        twoBallAngle: 0,
+      };
 
     // get camera position from cue ball to object ball
-    const lineFromCBToOB = [cueBall2D, objBall];
+    const lineFromCBToOB: Line = [cueBall2D, objBall];
     const angle2 = lineAngle(lineFromCBToOB);
     const aimPoint2 = pointTranslate(objBall, angle2, BALL_DIAMETER);
 
@@ -239,14 +272,12 @@ export const getOBAndCB = (
     //   -twoBallAngle,
     //   cueBall2D
     // );
-    const cueBall = [...cueBall2D, BALL_DIAMETER / 2];
 
     return {
       aimingLine,
-      cueBall,
+      cueBall2D,
       eyePosition,
       twoBallAngle,
-      correctEyePosition,
     };
   };
 
@@ -262,7 +293,7 @@ export const getOBAndCB = (
 
   return [
     eyePositionB,
-    [...objBall, BALL_DIAMETER / 2],
+    objBall,
     [...aimPoint, BALL_DIAMETER / 2],
     getAimingLine(180 - cutAngle),
     getAimingLine(cutAngle - 180),
@@ -272,10 +303,10 @@ export const getOBAndCB = (
 // give cue ball,object ball and target, return camera position that pick object ball to target
 
 export const getLimitPosition = (
-  limitTarget,
-  objBall,
-  cueBall,
-  eyeDistance
+  limitTarget: Point,
+  objBall: Point,
+  cueBall: Point,
+  eyeDistance: number
 ) => {
   const aimPoint1 = pointTranslate(
     objBall,
