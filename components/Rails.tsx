@@ -1,7 +1,5 @@
 import { useLoader } from "react-three-fiber";
-import { CylinderGeometry, TextureLoader } from "three";
-// import Hardwood from "../assets/textures/hardwood_floor.jpg";
-// import Cloth from "../assets/textures/cloth.jpg";
+import { TextureLoader } from "three";
 import {
   TABLE_SIZE,
   FACING_ANGLE,
@@ -32,7 +30,14 @@ const Rails = function () {
   const railMaterial = new MeshStandardMaterial({ map: woodTexture });
   const railSideGeometry = new BoxGeometry(...getRailSideGeometry);
   const railTopGeometry = new BoxGeometry(...getRailsTopGeometry);
+
   // CUSHIONS:
+  const clothTexture: Texture = useLoader(
+    TextureLoader,
+    "../assets/textures/cloth.jpg"
+  );
+  const clothMaterial = new MeshStandardMaterial({ map: clothTexture });
+
   const shape1 = new Shape();
   shape1.moveTo(0, 0);
   shape1.lineTo(0, topRailSideH);
@@ -72,23 +77,8 @@ const Rails = function () {
     bevelEnabled: false,
   };
   const cushion1Geometry = new ExtrudeGeometry(shape1, extrudeSettings);
-  // const cushion1Geometry = new CylinderGeometry(
-  //   (TABLE_SIZE.CUSHIONS_W * Math.cos((Math.PI / 180) * 60) * 2) / 3,
-  //   (TABLE_SIZE.CUSHIONS_W * Math.cos((Math.PI / 180) * 60) * 2) / 3,
-  //   topRailSideH,
-  //   3
-  // );
-
   const cushion2Geometry = new ExtrudeGeometry(shape2, extrudeSettings);
   const cushion3Geometry = new ExtrudeGeometry(shape3, extrudeSettings);
-
-  const clothMaterial = new MeshStandardMaterial({
-    color: 0x42a8ff,
-    roughness: 0.4,
-    bumpScale: 1,
-  });
-  const cloth = require("../assets/textures/cloth.jpg");
-  const clothTexture = useLoader(TextureLoader, cloth);
 
   return (
     <>

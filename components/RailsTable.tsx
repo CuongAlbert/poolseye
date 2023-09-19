@@ -1,9 +1,5 @@
-import { useLoader } from "@react-three/fiber";
 import React, { useMemo } from "react";
-// import Hardwood from ;
-// import Cloth from ;
-
-import { TextureLoader, Vector2, MeshBasicMaterial, Texture } from "three";
+import { TextureLoader, Texture } from "three";
 
 import {
   TABLE_SIZE,
@@ -18,12 +14,7 @@ import {
   cushion2Coordinate,
   cushion3Coordinate,
 } from "../constants";
-import {
-  BoxGeometry,
-  MeshStandardMaterial,
-  Shape,
-  ExtrudeGeometry,
-} from "three";
+import { BoxGeometry, Shape, ExtrudeGeometry } from "three";
 
 const RailsTable = function () {
   const hardWood = require("../assets/textures/tableFloor.jpg");

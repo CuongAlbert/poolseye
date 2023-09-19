@@ -1,7 +1,5 @@
 import React, { useRef, useMemo } from "react";
 import PoolTable from "../components/PoolTable";
-// import zero from "../assets/textures/0.png";
-// import ten from "../assets/textures/10.png";
 import { useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
 import Lines from "../components/Lines";
@@ -22,13 +20,9 @@ import {
   pointTranslate,
 } from "geometric";
 
-import Animated, {
+import {
   SharedValue,
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useFrameCallback,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { PerspectiveCamera, Vector3, WebGLRenderer } from "three";
@@ -140,36 +134,10 @@ function Scene(props: SceneProps) {
   const step = useSharedValue(0);
   gl.setClearColor(0x0000, 1);
 
-  let frame = 0.3;
-  camera.position;
-
   const transX = useSharedValue(0);
   const transY = useSharedValue(0);
   transX.value = camera.position.x;
   transY.value = camera.position.y;
-
-  // React.useEffect(() => {
-  //   transX.value = withTiming(transX.value, { duration: 1000 });
-  // }, []);
-
-  // let sv = useSharedValue(0), lookAt = cueBall;
-  // camera position:
-
-  // camera.position.x = eyePosition[0] + sv * (eyePositionB[0] - eyePosition[0])
-  // camera.position.y = eyePosition[1] + sv * (eyePositionB[1] - eyePosition[1])
-  //look at:
-
-  // lookAt[0] = cueBall[0] + sv * (objBall[0] - cueBall[0]);
-  // lookAt[1] = cueBall[1] + sv * (objBall[1] - cueBall[1]);
-
-  const moveX = eyePositionB
-    ? Math.abs(transX.value - eyePositionB[0]) / 60
-    : 0;
-  const moveY = eyePositionB
-    ? Math.abs(transY.value - eyePositionB[1]) / 60
-    : 0;
-  const backX = Math.abs(transX.value - eyePosition[0]) / 60;
-  const backY = Math.abs(transY.value - eyePosition[1]) / 60;
 
   React.useEffect(() => {
     transX.value = withTiming(-transX.value, { duration: 1500 });
@@ -177,12 +145,6 @@ function Scene(props: SceneProps) {
 
   useFrame(() => {
     if (changeTargetView.value == 1) {
-      // if (step.value < 5.4) {
-      //   step.value = withTiming(step.value + frame, { duration: 10 });
-      //   // transX.value += 0.1;
-      //   transY.value += 0.01;
-      // }
-
       if (transX.value <= eyePositionB[0] + 1)
         transX.value += Math.abs(transX.value - eyePositionB[0]) / 20;
       if (transY.value <= eyePositionB[1])
@@ -192,11 +154,10 @@ function Scene(props: SceneProps) {
         transX.value -= Math.abs(transX.value - eyePosition[0]) / 20;
       if (transY.value > eyePosition[1])
         transY.value -= Math.abs(transY.value - eyePosition[1]) / 20;
-      // step.value -= 0.1;
     }
 
     camera.fov = 50;
-    camera.aspect = 0.45; //2.16;
+    camera.aspect = 0.45;
     camera.near = 0.1;
     camera.far = 1000;
     camera.up.set(0, 0, 1);
@@ -217,7 +178,7 @@ function Scene(props: SceneProps) {
   gl.setClearColor(0x0000, 1);
 
   camera.fov = 50;
-  camera.aspect = 0.45; //2.16;
+  camera.aspect = 0.45;
   camera.near = 0.1;
   camera.far = 1000;
   camera.up.set(0, 0, 1);
@@ -260,8 +221,8 @@ function Scene(props: SceneProps) {
     BALL_DIAMETER / 2
   );
 
-  const zero = require("../assets/textures/0.png");
-  const ten = require("../assets/textures/10.png");
+  const zero: string = require("../assets/textures/0.png");
+  const ten: string = require("../assets/textures/10.png");
 
   return (
     <React.Suspense>

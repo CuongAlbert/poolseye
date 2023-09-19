@@ -2,7 +2,6 @@ import React, { useMemo, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader, MeshStandardMaterial, Texture } from "three";
 import { TABLE_SIZE } from "../constants";
-// import Cloth from "../assets/textures/cloth.jpg";
 import Pocket from "./Pocket";
 import RailsTable from "./RailsTable";
 
@@ -12,15 +11,7 @@ function PoolTable() {
     () => new TextureLoader().load(cloth),
     [cloth]
   );
-  const mesh = useRef();
 
-  // useFrame(() => {
-  //   if (mesh.current) {
-  //     mesh.current.rotation.z += 0.001;
-  //   }
-
-  //   // console.log(translationX.value);
-  // });
   return (
     <>
       <mesh receiveShadow>

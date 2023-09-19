@@ -1,25 +1,12 @@
-import React, { useState, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-// import Controls from "./Component/Controls";
+import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
 import Lights from "./components/Lights";
-import PoolTable from "./components/PoolTable";
-import PoolBall from "./components/PoolBall";
-// import { targetCoordinate } from "./constants";
-import Adjust from "./components/Adjust";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  TouchableWithoutFeedbackComponent,
-} from "react-native";
+import { Text, View, StyleSheet, Button } from "react-native";
 
 import Animated, {
   SharedValue,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
-  useFrameCallback,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
@@ -28,31 +15,12 @@ import {
   Gesture,
   GestureDetector,
   GestureHandlerRootView,
-  PanGestureHandler,
 } from "react-native-gesture-handler";
 import { withTiming } from "react-native-reanimated";
 
 export default function App() {
-  const [eyeDistance, setEyeDistance] = useState(0.75);
   const [changeTargetView, setChangeTargetView] = useState(0);
-  const translationX = useSharedValue(0);
-  const [eyeHeight, setEyeHeight] = useState(0.75);
   const [rotateAngle, setRotateAngle] = useState(0);
-  const [checkValue, setCheckValue] = useState(0);
-
-  const changeEyeDistanceValue = (e: any) => {
-    setEyeDistance(e);
-  };
-  const changeEyeHeightValue = (e: any) => setEyeHeight(e);
-  const changeRotateAngleValue = (e: any) => {
-    setRotateAngle(e);
-  };
-
-  const rotateAngleValue = useSharedValue(0);
-
-  const width = useSharedValue(100);
-
-  const handlePress = () => {};
 
   const changeView: SharedValue<number> = useSharedValue(0);
 
@@ -63,7 +31,6 @@ export default function App() {
   const changeTarget = () => {
     if (changeTargetView == 0) setChangeTargetView(1);
     else setChangeTargetView(0);
-    // console.log("==>", changeTargetView);
   };
 
   const pressed: SharedValue<boolean> = useSharedValue(false);
@@ -80,7 +47,6 @@ export default function App() {
     })
     .onFinalize((event) => {
       offset.value = withSpring(offset.value);
-
       pressed.value = false;
     });
 
@@ -121,10 +87,7 @@ export default function App() {
   return (
     <>
       <Canvas className="webGL">
-        {/* <FPSStats /> */}
         <Lights />
-        {/* <PoolTable /> */}
-        {/* <Box /> */}
         <Scene
           // position={[0, 0, 0]}
           target={"topRight"}
@@ -142,12 +105,8 @@ export default function App() {
       </Canvas>
 
       <View style={styles.container}>
-        {/* <MyAnimatedView style={{ ...styles.box, width }} /> */}
         <View className="h-16 w-16 ml-[55%] rounded-full bg-white opacity-50 pt-3 ">
           <Button onPress={changeTarget} title="Press" color={"gray"} />
-          {/* <Text className="text-white text-center font-medium -mt-3.5">
-            Change View
-          </Text> */}
         </View>
 
         <GestureHandlerRootView className="flex-1 ml-5 absolute left-0 bg-black">

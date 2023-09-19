@@ -1,18 +1,8 @@
 import React, { useMemo, useRef } from "react";
 import PropTypes from "prop-types";
-import {
-  TextureLoader,
-  Vector2,
-  MeshBasicMaterial,
-  Mesh,
-  BufferGeometry,
-  Material,
-  Object3DEventMap,
-  NormalBufferAttributes,
-} from "three";
+import { TextureLoader } from "three";
 import { BALL_DIAMETER } from "../constants";
-import { Canvas, Vector3, useFrame } from "@react-three/fiber";
-import { useSharedValue } from "react-native-reanimated";
+import { Vector3 } from "@react-three/fiber";
 
 export type PoolBallProps = {
   position: Vector3;
