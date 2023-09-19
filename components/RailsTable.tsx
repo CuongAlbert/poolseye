@@ -26,14 +26,15 @@ import {
 } from "three";
 
 const RailsTable = function () {
+  const hardWood = require("../assets/textures/tableFloor.jpg");
   const railMaterial: Texture = useMemo(
-    () => new TextureLoader().load("../assets/textures/tableFloor.jpg"),
-    ["../assets/textures/tableFloor.jpg"]
+    () => new TextureLoader().load(hardWood),
+    [hardWood]
   );
-
+  const cloth = require("../assets/textures/cloth.jpg");
   const clothMaterial: Texture = useMemo(
-    () => new TextureLoader().load("../assets/textures/cloth.jpg"),
-    ["../assets/textures/cloth.jpg"]
+    () => new TextureLoader().load(cloth),
+    [cloth]
   );
 
   const railSideGeometry: BoxGeometry = new BoxGeometry(...getRailSideGeometry);

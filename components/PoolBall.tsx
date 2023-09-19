@@ -14,13 +14,13 @@ import { BALL_DIAMETER } from "../constants";
 import { Canvas, Vector3, useFrame } from "@react-three/fiber";
 import { useSharedValue } from "react-native-reanimated";
 
-export type Props = {
+export type PoolBallProps = {
   position: Vector3;
   textureURL: string;
   opacity: number;
 };
 
-function PoolBall({ position, textureURL, opacity }: Props) {
+function PoolBall({ position, textureURL, opacity }: PoolBallProps) {
   const ballTexture = useMemo(
     () => new TextureLoader().load(textureURL),
     [textureURL]

@@ -1,14 +1,13 @@
 import { useLayoutEffect, useRef } from "react";
 import { Vector3, BufferGeometry, Line, LineBasicMaterial } from "three";
 
-export type Props = {
+export type LinesProps = {
   start: Vector3;
   end: Vector3;
-  shareValue: number;
 };
 
-function Lines(props: Props) {
-  const { start, end, shareValue } = props;
+function Lines(props: LinesProps) {
+  const { start, end } = props;
   const points: Vector3[] = [];
   points.push(new Vector3(...start));
   points.push(new Vector3(...end));

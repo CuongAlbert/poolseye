@@ -6,7 +6,6 @@ import Lights from "./components/Lights";
 import PoolTable from "./components/PoolTable";
 import PoolBall from "./components/PoolBall";
 // import { targetCoordinate } from "./constants";
-import Frame from "./components/Frame";
 import Adjust from "./components/Adjust";
 import {
   Text,
@@ -17,14 +16,13 @@ import {
 } from "react-native";
 
 import Animated, {
+  SharedValue,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useFrameCallback,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-
-import { handleClick } from "./view/Scene";
 
 import {
   Gesture,
@@ -42,11 +40,11 @@ export default function App() {
   const [rotateAngle, setRotateAngle] = useState(0);
   const [checkValue, setCheckValue] = useState(0);
 
-  const changeEyeDistanceValue = (e) => {
+  const changeEyeDistanceValue = (e: any) => {
     setEyeDistance(e);
   };
-  const changeEyeHeightValue = (e) => setEyeHeight(e);
-  const changeRotateAngleValue = (e) => {
+  const changeEyeHeightValue = (e: any) => setEyeHeight(e);
+  const changeRotateAngleValue = (e: any) => {
     setRotateAngle(e);
   };
 
@@ -56,15 +54,11 @@ export default function App() {
 
   const handlePress = () => {};
 
-  const handleCheck = (result) => {
-    setCheckValue(result);
-  };
-
-  const changeView = useSharedValue(0);
+  const changeView: SharedValue<number> = useSharedValue(0);
 
   React.useEffect(() => {
     changeView.value = changeTargetView;
-  }, changeTargetView);
+  });
 
   const changeTarget = () => {
     if (changeTargetView == 0) setChangeTargetView(1);
@@ -72,8 +66,8 @@ export default function App() {
     // console.log("==>", changeTargetView);
   };
 
-  const pressed = useSharedValue(false);
-  const offset = useSharedValue(0.5);
+  const pressed: SharedValue<boolean> = useSharedValue(false);
+  const offset: SharedValue<number> = useSharedValue(0.5);
   const transX = useSharedValue(0);
 
   const pan = Gesture.Pan()
@@ -98,8 +92,8 @@ export default function App() {
     backgroundColor: pressed.value ? "#FFE04B" : "#b58df1",
   }));
 
-  const pressed2 = useSharedValue(false);
-  const offset2 = useSharedValue(0.5);
+  const pressed2: SharedValue<boolean> = useSharedValue(false);
+  const offset2: SharedValue<number> = useSharedValue(0.5);
   const transX2 = useSharedValue(0);
 
   const pan2 = Gesture.Pan()
@@ -132,7 +126,7 @@ export default function App() {
         {/* <PoolTable /> */}
         {/* <Box /> */}
         <Scene
-          position={[0, 0, 0]}
+          // position={[0, 0, 0]}
           target={"topRight"}
           distance={2}
           cutAngle={15}
@@ -141,7 +135,7 @@ export default function App() {
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset2} // min= 0, max = 1
           rotateAngle={rotateAngle}
-          handleCheck={handleCheck}
+          // handleCheck={handleCheck}
           changeTargetView={changeView}
         />
         {/* <Controls target={target} distance={2} cutAngle={15} /> */}
@@ -187,7 +181,7 @@ export default function App() {
           changeValue={changeEyeHeightValue}
           value={eyeHeight}
         />
-        
+
 
         <Adjust
           label="Rotate"
@@ -220,9 +214,6 @@ const styles = StyleSheet.create({
     color: "#999",
     fontSize: 12,
     position: "absolute",
-
-    color: "white",
-
     border: 1,
     bottom: 50,
     borderRadius: 8,

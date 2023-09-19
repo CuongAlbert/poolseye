@@ -9,7 +9,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 
-export type Props = {
+export type AdjustProps = {
   value: number;
   changeValue: () => {};
   max: number;
@@ -17,7 +17,7 @@ export type Props = {
   label: string;
 };
 
-const Adjust = (props: Props) => {
+const Adjust = (props: AdjustProps) => {
   return (
     <View style={styles.adjust}>
       <Text style={styles.label}>

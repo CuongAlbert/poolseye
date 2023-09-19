@@ -153,7 +153,7 @@ export const getOBAndCB = (
   cutAngle: number,
   eyeDistance: number
 ): [
-  eyePositionB: Point | undefined,
+  eyePositionB: Point,
   objBall: Point,
   aimPoint: number[],
   getAimingLine:
@@ -229,11 +229,8 @@ export const getOBAndCB = (
     );
 
     let cueBall2D;
-    if (aimingLine)
-      cueBall2D =
-        lineInterpolate(aimingLine)(
-          0.3
-        ); // 0.3 is distance of cueBall and target
+    if (aimingLine) cueBall2D = lineInterpolate(aimingLine)(0.3);
+    // 0.3 is distance of cueBall and target
     else
       return {
         aimingLine: [

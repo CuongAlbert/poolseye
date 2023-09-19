@@ -87,8 +87,8 @@ const Rails = function () {
     roughness: 0.4,
     bumpScale: 1,
   });
-  const clothTexture = useLoader(TextureLoader, "../assets/textures/cloth.jpg");
-  clothMaterial.map = clothTexture;
+  const cloth = require("../assets/textures/cloth.jpg");
+  const clothTexture = useLoader(TextureLoader, cloth);
 
   return (
     <>

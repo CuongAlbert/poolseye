@@ -1,8 +1,7 @@
 import React, { useRef, useMemo } from "react";
-//import PoolBall from "../Component/PoolBall";
 import PoolTable from "../components/PoolTable";
-import zero from "../assets/textures/0.png";
-import ten from "../assets/textures/10.png";
+// import zero from "../assets/textures/0.png";
+// import ten from "../assets/textures/10.png";
 import { useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
 import Lines from "../components/Lines";
@@ -24,6 +23,7 @@ import {
 } from "geometric";
 
 import Animated, {
+  SharedValue,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useFrameCallback,
@@ -31,21 +31,23 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { PerspectiveCamera, Vector3, WebGLRenderer } from "three";
 
-export type sceneProps = {
+export type SceneProps = {
   target: string;
   distance: number;
   cutAngle: number;
   side: string;
   showAimPoint: boolean;
-  eyeHeight: number;
-  eyeDistance: number;
+  eyeHeight: SharedValue<number>;
+  eyeDistance: SharedValue<number>;
   rotateAngle: number;
-  changeTargetView: number;
+  changeTargetView: SharedValue<number>;
 };
 
-function Scene(props: sceneProps) {
-  const { camera, gl } = useThree();
+function Scene(props: SceneProps) {
+  const { camera, gl }: { camera: PerspectiveCamera; gl: WebGLRenderer } =
+    useThree();
   const {
     target,
     distance,
@@ -59,11 +61,23 @@ function Scene(props: sceneProps) {
   } = props;
 
   const [eyePositionB, objBall, aimPoint, aiming1, aiming2] = useMemo(
-    () => getOBAndCB(targetCoordinate[target], distance, cutAngle, eyeDistance),
+    () =>
+      getOBAndCB(
+        targetCoordinate[target],
+        distance,
+        cutAngle,
+        eyeDistance.value
+      ),
     [target, distance, cutAngle, eyeDistance]
   );
 
-  let aimingLine, eyePosition: Point, cueBall2D: Point, twoBallAngle: number;
+  let aimingLine: Line = [
+      [0, 0],
+      [0, 0],
+    ],
+    eyePosition: Point = [0, 0],
+    cueBall2D: Point = [0, 0],
+    twoBallAngle: number = 0;
   if (side === "left" && aiming1 !== undefined) {
     (aimingLine = aiming1.aimingLine),
       (eyePosition = aiming1.eyePosition),
@@ -83,7 +97,7 @@ function Scene(props: sceneProps) {
         targetLimitPoint[target][1],
         objBall,
         cueBall2D,
-        eyeDistance
+        eyeDistance.value
       ),
     [objBall, eyeDistance, target]
   );
@@ -94,7 +108,7 @@ function Scene(props: sceneProps) {
         targetLimitPoint[target][2],
         objBall,
         cueBall2D,
-        eyeDistance
+        eyeDistance.value
       ),
     [target, objBall, eyeDistance]
   );
@@ -107,7 +121,7 @@ function Scene(props: sceneProps) {
   );
   const maxTrueCameraPosition = pointTranslate(
     cueBall2D,
-    lineAngle([cueBall.slice(0, 2), maxTrueEyePosition]),
+    lineAngle([cueBall2D, maxTrueEyePosition]),
     eyePositionAndCueBallLength
   );
 
@@ -148,8 +162,12 @@ function Scene(props: sceneProps) {
   // lookAt[0] = cueBall[0] + sv * (objBall[0] - cueBall[0]);
   // lookAt[1] = cueBall[1] + sv * (objBall[1] - cueBall[1]);
 
-  const moveX = Math.abs(transX.value - eyePositionB[0]) / 60;
-  const moveY = Math.abs(transY.value - eyePositionB[1]) / 60;
+  const moveX = eyePositionB
+    ? Math.abs(transX.value - eyePositionB[0]) / 60
+    : 0;
+  const moveY = eyePositionB
+    ? Math.abs(transY.value - eyePositionB[1]) / 60
+    : 0;
   const backX = Math.abs(transX.value - eyePosition[0]) / 60;
   const backY = Math.abs(transY.value - eyePosition[1]) / 60;
 
@@ -158,7 +176,7 @@ function Scene(props: sceneProps) {
   }, []);
 
   useFrame(() => {
-    if (changeTargetView == 1) {
+    if (changeTargetView.value == 1) {
       // if (step.value < 5.4) {
       //   step.value = withTiming(step.value + frame, { duration: 10 });
       //   // transX.value += 0.1;
@@ -169,11 +187,6 @@ function Scene(props: sceneProps) {
         transX.value += Math.abs(transX.value - eyePositionB[0]) / 20;
       if (transY.value <= eyePositionB[1])
         transY.value += Math.abs(transY.value - eyePositionB[1]) / 20;
-
-      console.log(eyePositionB);
-      console.log(transX.value, " ", transY.value);
-      console.log(moveX);
-      // if (transY.value < eyePositionB[1]) transX.value += 0.1;
     } else {
       if (transX.value > eyePosition[0])
         transX.value -= Math.abs(transX.value - eyePosition[0]) / 20;
@@ -182,23 +195,15 @@ function Scene(props: sceneProps) {
       // step.value -= 0.1;
     }
 
-    if (changeTargetView.value == 0) changeTargetView.value = camera.fov = 50;
+    camera.fov = 50;
     camera.aspect = 0.45; //2.16;
     camera.near = 0.1;
     camera.far = 1000;
     camera.up.set(0, 0, 1);
     let zoom = 10;
 
-    // React.useEffect(() => {
-    //   step.value = withTiming(step.value, { duration: 1000 });
-    // }, []);
-
     const rotateCamera = [
-      ...pointRotate(
-        eyePosition,
-        step.value * twoBallAngle,
-        cueBall.slice(0, 2)
-      ),
+      ...pointRotate(eyePosition, step.value * twoBallAngle, cueBall2D),
       0.36 + eyeHeight.value * 5.2,
     ];
 
@@ -206,11 +211,7 @@ function Scene(props: sceneProps) {
     camera.position.x = transX.value;
     camera.position.y = transY.value;
     camera.updateProjectionMatrix();
-    camera.lookAt(...objBall);
-
-    const cueLine = [camera.position.x, camera.position.y, BALL_DIAMETER / 2];
-
-    const cueLineMidPoint = lineMidpoint([cueLine, cueBall]);
+    camera.lookAt(...objBall, BALL_DIAMETER / 2);
   });
 
   gl.setClearColor(0x0000, 1);
@@ -223,24 +224,16 @@ function Scene(props: sceneProps) {
   let zoom = 10;
 
   const rotateCamera = [
-    ...pointRotate(
-      eyePosition,
-      rotateAngle * twoBallAngle,
-      cueBall.slice(0, 2)
-    ),
+    ...pointRotate(eyePosition, rotateAngle * twoBallAngle, cueBall2D),
     0.36 + eyeHeight.value * 5.2,
   ];
 
   [camera.position.x, camera.position.y, camera.position.z] = rotateCamera;
-  // console.log("eyePositionB", eyePositionB);
-  // camera.position.x = eyePositionB[0];
-  // camera.position.y = eyePositionB[1];
-  // camera.position.z = 4;
 
   camera.updateProjectionMatrix();
-  camera.lookAt(...objBall);
+  camera.lookAt(...objBall, BALL_DIAMETER / 2);
 
-  const cueLine = [camera.position.x, camera.position.y, BALL_DIAMETER / 2];
+  const cueLine: Point = [camera.position.x, camera.position.y];
 
   let result;
   if (minTrueCameraPosition[0] === maxTrueCameraPosition[0]) {
@@ -262,59 +255,42 @@ function Scene(props: sceneProps) {
       cueLine[0] < minTrueCameraPosition[0] &&
       cueLine[0] > maxTrueCameraPosition[0];
 
-  const cueLineMidPoint = lineMidpoint([cueLine, cueBall]);
+  const cueLineMidPoint: Vector3 = new Vector3(
+    ...lineMidpoint([cueLine, cueBall2D]),
+    BALL_DIAMETER / 2
+  );
+
+  const zero = require("../assets/textures/0.png");
+  const ten = require("../assets/textures/10.png");
 
   return (
     <React.Suspense>
-      <PoolTable ref={ref} />
-      <PoolBall position={objBall} textureURL={ten} opacity={1} />
-      <Lines start={cueLineMidPoint} end={cueBall} />
-      <PoolBall position={cueBall} textureURL={zero} opacity={1} />
+      <PoolTable />
+      <PoolBall
+        position={[...objBall, BALL_DIAMETER / 2]}
+        textureURL={ten}
+        opacity={1}
+      />
+      <Lines
+        start={cueLineMidPoint}
+        end={new Vector3(...cueBall2D, BALL_DIAMETER / 2)}
+      />
+      <PoolBall
+        position={[...cueBall2D, BALL_DIAMETER / 2]}
+        textureURL={zero}
+        opacity={1}
+      />
       {/* {showAimPoint && (
         <PoolBall position={aimPoint} textureURL={zero} opacity={0.5} />
       )} */}
-      {/* <Lines
-        start={cueBall}
-        end={[...minTrueCameraPosition, BALL_DIAMETER / 2]}
+      <Lines
+        start={new Vector3(...objBall, BALL_DIAMETER / 2)}
+        end={new Vector3(...targetCoordinate[target][1], BALL_DIAMETER / 2)}
       />
       <Lines
-        start={cueBall}
-        end={[...maxTrueCameraPosition, BALL_DIAMETER / 2]}
-      /> */}
-      <Lines
-        start={objBall}
-        end={[...targetCoordinate[target][1], BALL_DIAMETER / 2]}
+        start={new Vector3(...objBall, BALL_DIAMETER / 2)}
+        end={new Vector3(...eyePositionB, BALL_DIAMETER / 2)}
       />
-      <Lines start={objBall} end={eyePositionB} />
-
-      {/* <PoolBall position={oneBall} textureURL={one} opacity={1} />
-      <PoolBall position={twoBall} textureURL={two} opacity={1} />
-      <PoolBall position={threeBall} textureURL={three} opacity={1} /> */}
-      {/* <PoolBall position={oneBall} textureURL={eight} opacity={1} /> */}
-      {/* <PoolBall position={[1.2, -1.2, 0.114]} textureURL={eight} opacity={1} />
-      <PoolBall position={[-1.2, 1.2, 0.114]} textureURL={seven} opacity={1} /> */}
-
-      {/* <Lines start={aimingLine[0]} end={aimingLine[1]} /> */}
-
-      {/* <Lines start={aimPoint} end={[...eyePosition, BALL_DIAMETER / 2]} /> */}
-
-      {/* <Lines
-        start={cueBall}
-        end={[...minLimitEyePosition, BALL_DIAMETER / 2]}
-      />
-      <Lines
-        start={cueBall}
-        end={[...maxLimitEyePosition, BALL_DIAMETER / 2]}
-      /> */}
-
-      {/* <Lines
-        start={[...minAimPoint, BALL_DIAMETER / 2]}
-        end={[...minTrueEyePosition, BALL_DIAMETER / 2]}
-      />
-      <Lines
-        start={[...maxAimPoint, BALL_DIAMETER / 2]}
-        end={[...maxTrueEyePosition, BALL_DIAMETER / 2]}
-      /> */}
     </React.Suspense>
   );
 }
