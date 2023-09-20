@@ -128,4 +128,4 @@ const RailsTable = function () {
   );
 };
 
-export default RailsTable;
+export default React.memo(RailsTable);

@@ -1,3 +1,4 @@
+import React from "react";
 import { TABLE_SIZE, SHELF_DEPTH } from "../constants";
 import { CylinderGeometry, MeshBasicMaterial, Vector3 } from "three";
 
@@ -34,4 +35,4 @@ const Pocket = function () {
   ));
 };
 
-export default Pocket;
+export default React.memo(Pocket);

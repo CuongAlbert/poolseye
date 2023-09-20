@@ -15,7 +15,6 @@ import {
 } from "geometric";
 
 // get random Object Ball
-export type Maybe<T> = T | undefined | null;
 export const randomOB = new Vector3(
   Math.random() * 2 * cross.X - cross.X,
   Math.random() * 2 * cross.Y - cross.Y,
@@ -222,11 +221,11 @@ export const getOBAndCB = (
   } => {
     const aimingLine2D: Line = lineRotate(lineOfCenter, angle, aimPoint);
     const aimingLineCheckPoint: Point = pointRotate(objBall, angle, aimPoint);
-    const [aimingLine, outsidePoint]: [Line, Point] = getCrossPoint(
+    const aimingLine: Line = getCrossPoint(
       aimingLine2D,
       aimingLineCheckPoint,
       aimPoint
-    );
+    )[0];
 
     let cueBall2D;
     if (aimingLine) cueBall2D = lineInterpolate(aimingLine)(0.3);

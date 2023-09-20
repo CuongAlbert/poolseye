@@ -1,6 +1,5 @@
-import React, { useMemo, useRef } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { TextureLoader, MeshStandardMaterial, Texture } from "three";
+import React, { useMemo } from "react";
+import { TextureLoader, Texture } from "three";
 import { TABLE_SIZE } from "../constants";
 import Pocket from "./Pocket";
 import RailsTable from "./RailsTable";

@@ -102,7 +102,7 @@ export const cushion2Coordinate = [
     TABLE_SIZE.Z_PARAM
   ),
 ];
-export const cushion3Coordinate = [
+export const cushion3Coordinate: Vector3[] = [
   new Vector3(
     -topRailTopW / 2,
     TABLE_SIZE.PLAY_FIELD_H / 2 + TABLE_SIZE.CUSHIONS_W,
@@ -115,7 +115,7 @@ export const cushion3Coordinate = [
   ),
 ];
 
-export const targetPointCoordinate = {
+export const targetPointCoordinate: { [key: string]: number } = {
   sideX: TABLE_SIZE.PLAY_FIELD_W / 2,
   sideY:
     TABLE_SIZE.PLAY_FIELD_H / 2 +

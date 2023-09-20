@@ -7,6 +7,7 @@ import { Text, View, StyleSheet, Button } from "react-native";
 import Animated, {
   SharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
@@ -19,23 +20,21 @@ import {
 import { withTiming } from "react-native-reanimated";
 
 export default function App() {
-  const [changeTargetView, setChangeTargetView] = useState(0);
-  const [rotateAngle, setRotateAngle] = useState(0);
+  const changeViewTarget: SharedValue<number> = useSharedValue(0);
 
   const changeView: SharedValue<number> = useSharedValue(0);
 
-  React.useEffect(() => {
-    changeView.value = changeTargetView;
-  });
-
   const changeTarget = () => {
-    if (changeTargetView == 0) setChangeTargetView(1);
-    else setChangeTargetView(0);
+    console.log(changeViewTarget.value);
+    changeViewTarget.value = 1 - changeViewTarget.value;
   };
+  useDerivedValue(() => {
+    changeView.value = withTiming(changeViewTarget.value, { duration: 1000 });
+  });
 
   const pressed: SharedValue<boolean> = useSharedValue(false);
   const offset: SharedValue<number> = useSharedValue(0.5);
-  const transX = useSharedValue(0);
+  const transX: SharedValue<number> = useSharedValue(0);
 
   const pan = Gesture.Pan()
     .onBegin((event) => {
@@ -60,7 +59,7 @@ export default function App() {
 
   const pressed2: SharedValue<boolean> = useSharedValue(false);
   const offset2: SharedValue<number> = useSharedValue(0.5);
-  const transX2 = useSharedValue(0);
+  const transX2: SharedValue<number> = useSharedValue(0);
 
   const pan2 = Gesture.Pan()
     .onBegin((event) => {
@@ -77,13 +76,36 @@ export default function App() {
 
   const animatedStyles2 = useAnimatedStyle(() => ({
     transform: [
-      { translateX: offset2.value * -432 },
+      { translateX: (offset2.value * -432) / 10 },
       { scale: withTiming(pressed2.value ? 1.2 : 1) },
     ],
     backgroundColor: pressed2.value ? "#FFE04B" : "#b58df1",
   }));
 
-  console.log("Reloading.....");
+  const pressedChangeView: SharedValue<number> = useSharedValue(0);
+  const offsetChangView: SharedValue<number> = useSharedValue(0);
+
+  const panChangeView = Gesture.Pan()
+    .onBegin(() => {
+      pressedChangeView.value = 1;
+    })
+    .onChange((event) => {
+      offsetChangView.value = event.translationX;
+      pressedChangeView.value = 1;
+    })
+    .onFinalize(() => {
+      offsetChangView.value = withSpring(0);
+      pressedChangeView.value = 0;
+    });
+
+  const animatedStylesChangeView = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: 0 },
+      { scale: withTiming(pressedChangeView.value === 1 ? 1.2 : 1) },
+    ],
+    backgroundColor: pressedChangeView.value ? "#FFE04B" : "#b58df1",
+  }));
+
   return (
     <>
       <Canvas className="webGL">
@@ -96,8 +118,8 @@ export default function App() {
           side="right"
           showAimPoint={true}
           eyeHeight={offset} // min = 1.8, max = 7
-          eyeDistance={offset2} // min= 0, max = 1
-          rotateAngle={rotateAngle}
+          eyeDistance={offset2} // min = 0, max = 1
+          rotateAngle={offset2}
           // handleCheck={handleCheck}
           changeTargetView={changeView}
         />
@@ -107,6 +129,14 @@ export default function App() {
       <View style={styles.container}>
         <View className="h-16 w-16 ml-[55%] rounded-full bg-white opacity-50 pt-3 ">
           <Button onPress={changeTarget} title="Press" color={"gray"} />
+          <GestureHandlerRootView className="flex-1 -top-32 left-0">
+            <GestureDetector gesture={panChangeView}>
+              <Animated.View
+                style={animatedStylesChangeView}
+                className="h-16 w-16 bg-white rounded-full justify-center items-center flex-col -pt-1"
+              ></Animated.View>
+            </GestureDetector>
+          </GestureHandlerRootView>
         </View>
 
         <GestureHandlerRootView className="flex-1 ml-5 absolute left-0 bg-black">

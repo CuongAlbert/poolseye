@@ -1,3 +1,4 @@
+import React from "react";
 import { useLoader } from "react-three-fiber";
 import { TextureLoader } from "three";
 import {
@@ -120,4 +121,4 @@ const Rails = function () {
   );
 };
 
-export default Rails;
+export default React.memo(Rails);

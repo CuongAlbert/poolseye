@@ -9,7 +9,7 @@ const getCoordinateLights = (
   dc: number,
   row: number,
   col: number
-) => {
+): Vector3[] => {
   const pointLight = [];
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
@@ -54,4 +54,4 @@ const Lights = () => {
   );
 };
 
-export default Lights;
+export default React.memo(Lights);
