@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
 import Lights from "./components/Lights";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, TouchableOpacity } from "react-native";
 
 import Animated, {
+  Easing,
   SharedValue,
   useAnimatedStyle,
   useDerivedValue,
@@ -23,13 +24,28 @@ export default function App() {
   const changeViewTarget: SharedValue<number> = useSharedValue(0);
 
   const changeView: SharedValue<number> = useSharedValue(0);
+  const touch: SharedValue<boolean> = useSharedValue(false);
 
   const changeTarget = () => {
-    console.log(changeViewTarget.value);
     changeViewTarget.value = 1 - changeViewTarget.value;
+    touch.value = true;
+  };
+  const stopChangeTarget = () => {
+    changeViewTarget.value = 0;
+    touch.value = false;
   };
   useDerivedValue(() => {
-    changeView.value = withTiming(changeViewTarget.value, { duration: 1000 });
+    if (touch.value === true) {
+      changeView.value = withTiming(changeViewTarget.value, {
+        duration: 800,
+        easing: Easing.in(Easing.poly(4)),
+      });
+    } else {
+      changeView.value = withTiming(changeViewTarget.value, {
+        duration: 800,
+        easing: Easing.in(Easing.poly(2)),
+      });
+    }
   });
 
   const pressed: SharedValue<boolean> = useSharedValue(false);
@@ -82,28 +98,12 @@ export default function App() {
     backgroundColor: pressed2.value ? "#FFE04B" : "#b58df1",
   }));
 
-  const pressedChangeView: SharedValue<number> = useSharedValue(0);
-  const offsetChangView: SharedValue<number> = useSharedValue(0);
-
-  const panChangeView = Gesture.Pan()
-    .onBegin(() => {
-      pressedChangeView.value = 1;
-    })
-    .onChange((event) => {
-      offsetChangView.value = event.translationX;
-      pressedChangeView.value = 1;
-    })
-    .onFinalize(() => {
-      offsetChangView.value = withSpring(0);
-      pressedChangeView.value = 0;
-    });
-
   const animatedStylesChangeView = useAnimatedStyle(() => ({
     transform: [
       { translateX: 0 },
-      { scale: withTiming(pressedChangeView.value === 1 ? 1.2 : 1) },
+      { scale: withTiming(touch.value === true ? 1.2 : 1) },
     ],
-    backgroundColor: pressedChangeView.value ? "#FFE04B" : "#b58df1",
+    backgroundColor: touch.value ? "#FFE04B" : "#b58df1",
   }));
 
   return (
@@ -111,14 +111,13 @@ export default function App() {
       <Canvas className="webGL">
         <Lights />
         <Scene
-          // position={[0, 0, 0]}
           target={"topRight"}
           distance={2}
           cutAngle={15}
           side="right"
           showAimPoint={true}
           eyeHeight={offset} // min = 1.8, max = 7
-          eyeDistance={offset2} // min = 0, max = 1
+          eyeDistance={offset} // min = 0, max = 1
           rotateAngle={offset2}
           // handleCheck={handleCheck}
           changeTargetView={changeView}
@@ -127,17 +126,18 @@ export default function App() {
       </Canvas>
 
       <View style={styles.container}>
-        <View className="h-16 w-16 ml-[55%] rounded-full bg-white opacity-50 pt-3 ">
-          <Button onPress={changeTarget} title="Press" color={"gray"} />
-          <GestureHandlerRootView className="flex-1 -top-32 left-0">
-            <GestureDetector gesture={panChangeView}>
-              <Animated.View
-                style={animatedStylesChangeView}
-                className="h-16 w-16 bg-white rounded-full justify-center items-center flex-col -pt-1"
-              ></Animated.View>
-            </GestureDetector>
-          </GestureHandlerRootView>
-        </View>
+        <TouchableOpacity
+          activeOpacity={0.4}
+          onPressIn={changeTarget}
+          onPressOut={stopChangeTarget}
+        >
+          <Animated.View
+            style={animatedStylesChangeView}
+            className="h-16 w-16 ml-[55%] rounded-full pt-5 pl-3.5 "
+          >
+            <Text className="text-gray-500">Press</Text>
+          </Animated.View>
+        </TouchableOpacity>
 
         <GestureHandlerRootView className="flex-1 ml-5 absolute left-0 bg-black">
           <GestureDetector gesture={pan}>
