@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
 import Lights from "./components/Lights";
-import { Text, View, StyleSheet, Button, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 
 import Animated, {
   Easing,
@@ -115,7 +115,7 @@ export default function App() {
           distance={2}
           cutAngle={15}
           side="right"
-          showAimPoint={true}
+          showAimPoint={false}
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset} // min = 0, max = 1
           rotateAngle={offset2}
@@ -130,6 +130,7 @@ export default function App() {
           activeOpacity={0.4}
           onPressIn={changeTarget}
           onPressOut={stopChangeTarget}
+          className="h-16 w-16 ml-[55%] rounded-full pt-5 pl-3.5 "
         >
           <Animated.View
             style={animatedStylesChangeView}
@@ -139,7 +140,7 @@ export default function App() {
           </Animated.View>
         </TouchableOpacity>
 
-        <GestureHandlerRootView className="flex-1 ml-5 absolute left-0 bg-black">
+        <GestureHandlerRootView className="h-[100%] flex-1 ml-5 absolute left-0 bg-black">
           <GestureDetector gesture={pan}>
             <Animated.View
               style={animatedStyles}
@@ -162,37 +163,7 @@ export default function App() {
             </Animated.View>
           </GestureDetector>
         </GestureHandlerRootView>
-
-        {/* <Adjust
-          label="Eye Height"
-          min={0}
-          max={1.5}
-          changeValue={changeEyeHeightValue}
-          value={eyeHeight}
-        />
-
-
-        <Adjust
-          label="Rotate"
-          min={-50}
-          max={50}
-          changeValue={changeRotateAngleValue}
-          value={rotateAngle}
-        /> */}
       </View>
-
-      {/* <View
-        style={{
-          backgroundColor: checkValue ? "green" : "red",
-          cursor: "pointer",
-          borderRadius: 5,
-          width: 60,
-          height: 30,
-          top: 50,
-          left: "46%",
-          position: "absolute",
-        }}
-      ></View> */}
     </>
   );
 }

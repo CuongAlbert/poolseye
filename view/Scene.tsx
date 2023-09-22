@@ -220,9 +220,9 @@ function Scene(props: SceneProps) {
         textureURL={zero}
         opacity={1}
       />
-      {/* {showAimPoint && (
+      {showAimPoint && (
         <PoolBall position={aimPoint} textureURL={zero} opacity={0.5} />
-      )} */}
+      )}
       {/* <Lines
         start={new Vector3(...objBall, BALL_DIAMETER / 2)}
         end={new Vector3(...targetCoordinate[target][1], BALL_DIAMETER / 2)}

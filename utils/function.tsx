@@ -154,7 +154,7 @@ export const getOBAndCB = (
 ): [
   eyePositionB: Point,
   objBall: Point,
-  aimPoint: number[],
+  aimPoint: Vector3,
   getAimingLine:
     | {
         aimingLine: Line;
@@ -290,7 +290,7 @@ export const getOBAndCB = (
   return [
     eyePositionB,
     objBall,
-    [...aimPoint, BALL_DIAMETER / 2],
+    new Vector3(...aimPoint, BALL_DIAMETER / 2),
     getAimingLine(180 - cutAngle),
     getAimingLine(cutAngle - 180),
   ];
