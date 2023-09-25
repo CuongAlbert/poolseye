@@ -1,5 +1,11 @@
 import React, { useMemo } from "react";
-import { TextureLoader, Texture } from "three";
+import {
+  TextureLoader,
+  Texture,
+  BoxGeometry,
+  Shape,
+  ExtrudeGeometry,
+} from "three";
 
 import {
   TABLE_SIZE,
@@ -14,7 +20,6 @@ import {
   cushion2Coordinate,
   cushion3Coordinate,
 } from "../constants";
-import { BoxGeometry, Shape, ExtrudeGeometry } from "three";
 
 const RailsTable = function () {
   const hardWood = require("../assets/textures/tableFloor.jpg");

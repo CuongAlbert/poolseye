@@ -5,12 +5,13 @@ import { BALL_DIAMETER } from "../constants";
 import { Vector3 } from "@react-three/fiber";
 
 export type PoolBallProps = {
+  r: number;
   position: Vector3;
   textureURL: string;
   opacity: number;
 };
 
-function PoolBall({ position, textureURL, opacity }: PoolBallProps) {
+function PoolBall({ r, position, textureURL, opacity }: PoolBallProps) {
   const ballTexture = useMemo(
     () => new TextureLoader().load(textureURL),
     [textureURL]
@@ -20,7 +21,7 @@ function PoolBall({ position, textureURL, opacity }: PoolBallProps) {
 
   return (
     <mesh ref={mesh} position={position} castShadow>
-      <sphereGeometry attach="geometry" args={[BALL_DIAMETER / 2, 64, 32]} />
+      <sphereGeometry attach="geometry" args={[r, 64, 32]} />
 
       <meshStandardMaterial
         attach="material"

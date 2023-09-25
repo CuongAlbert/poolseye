@@ -1,5 +1,5 @@
 import React from "react";
-import { useLoader } from "react-three-fiber";
+import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import {
   TABLE_SIZE,

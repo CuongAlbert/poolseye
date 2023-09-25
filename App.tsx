@@ -74,7 +74,7 @@ export default function App() {
   }));
 
   const pressed2: SharedValue<boolean> = useSharedValue(false);
-  const offset2: SharedValue<number> = useSharedValue(0.5);
+  const offset2: SharedValue<number> = useSharedValue(0);
   const transX2: SharedValue<number> = useSharedValue(0);
 
   const pan2 = Gesture.Pan()
@@ -115,7 +115,8 @@ export default function App() {
           distance={2}
           cutAngle={15}
           side="right"
-          showAimPoint={false}
+          showAimPoint={true}
+          showCutPoint={true}
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset} // min = 0, max = 1
           rotateAngle={offset2}
@@ -140,7 +141,7 @@ export default function App() {
           </Animated.View>
         </TouchableOpacity>
 
-        <GestureHandlerRootView className="h-[100%] flex-1 ml-5 absolute left-0 bg-black">
+        <GestureHandlerRootView className="h-[100%] flex-1 ml-5 absolute left-0">
           <GestureDetector gesture={pan}>
             <Animated.View
               style={animatedStyles}
@@ -152,7 +153,7 @@ export default function App() {
           </GestureDetector>
         </GestureHandlerRootView>
 
-        <GestureHandlerRootView className="flex-1 absolute mr-5 right-0 bg-black">
+        <GestureHandlerRootView className="flex-1 absolute mr-5 right-0">
           <GestureDetector gesture={pan2}>
             <Animated.View
               style={animatedStyles2}
