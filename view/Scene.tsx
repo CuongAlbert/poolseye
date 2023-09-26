@@ -221,14 +221,16 @@ function Scene(props: SceneProps) {
   const cutPoint: Point = lineMidpoint([objBall, aimPoint]);
 
   const zero: string = require("../assets/textures/0.png");
-  const ten: string = require("../assets/textures/10.png");
+  const six: string = require("../assets/textures/6_basecolor.png");
+  const ten: string = require("../assets/textures/10_basecolor.png");
+  const fifteen: string = require("../assets/textures/15_basecolor.png");
   const point: string = require("../assets/textures/red_point.jpeg");
 
   // show flow of cueBall
-  const [flow1, flow2, lineToOb] = getFlowCueBall(
-    [cueLine, cueBall2D],
-    objBall
-  );
+  // const lineToOb = getFlowCueBall(
+  //   [cueLine, cueBall2D],
+  //   objBall
+  // );
 
   return (
     <React.Suspense>
@@ -236,7 +238,7 @@ function Scene(props: SceneProps) {
       <PoolBall
         r={BALL_DIAMETER / 2}
         position={[...objBall, BALL_DIAMETER / 2]}
-        textureURL={ten}
+        textureURL={six}
         opacity={1}
       />
       <Flow line={[cueLine, cueBall2D]} objBall={objBall} />

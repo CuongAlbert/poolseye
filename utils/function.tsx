@@ -9,7 +9,6 @@ import {
   lineInterpolate,
   angleToRadians,
   lineLength,
-  angleToDegrees,
   Point,
   Line,
   lineTranslate,
@@ -319,7 +318,7 @@ export const getLimitPosition = (
   return [eyeLimitPosition, aimPoint1];
 };
 
-export const getFlowCueBall = (line: Line, objBall: Point): Line[] => {
+export const getFlowCueBall = (line: Line, objBall: Point): Line => {
   const reverseLine = lineRotate(line, 180, line[1]);
   const length = lineLength([line[1], objBall]);
   const endOfReverseLine = pointTranslate(
@@ -327,19 +326,16 @@ export const getFlowCueBall = (line: Line, objBall: Point): Line[] => {
     lineAngle(reverseLine) - 180,
     length
   );
-  return [
-    // lineTranslate(reverseLine, 90, BALL_DIAMETER / 2),
-    // lineTranslate(reverseLine, -90, BALL_DIAMETER / 2),
-    lineTranslate(
-      [reverseLine[1], endOfReverseLine],
-      90 + lineAngle(reverseLine),
-      BALL_DIAMETER / 2
-    ),
-    lineTranslate(
-      [reverseLine[1], endOfReverseLine],
-      -90 + lineAngle(reverseLine),
-      BALL_DIAMETER / 2
-    ),
-    [line[1], endOfReverseLine],
-  ];
+  return [line[1], endOfReverseLine];
+  // lineTranslate(
+  //   [reverseLine[1], endOfReverseLine],
+  //   90 + lineAngle(reverseLine),
+  //   BALL_DIAMETER / 2
+  // ),
+  // lineTranslate(
+  //   [reverseLine[1], endOfReverseLine],
+  //   -90 + lineAngle(reverseLine),
+  //   BALL_DIAMETER / 2
+  // ),
+  // ];
 };

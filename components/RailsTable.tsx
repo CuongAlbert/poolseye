@@ -104,7 +104,13 @@ const RailsTable = function () {
           position={pos}
           rotation={idx === 1 ? [0, Math.PI, 0] : [0, 0, 0]}
         >
-          <meshStandardMaterial attach="material" map={clothMaterial} />
+          <meshStandardMaterial
+            attach="material"
+            map={clothMaterial}
+            color={0x42a8ff}
+            roughness={1}
+            bumpScale={1}
+          />
         </mesh>
       ))}
 
@@ -115,7 +121,13 @@ const RailsTable = function () {
           position={pos}
           rotation={idx === 1 ? [0, Math.PI, 0] : [0, 0, 0]}
         >
-          <meshStandardMaterial attach="material" map={clothMaterial} />
+          <meshStandardMaterial
+            attach="material"
+            map={clothMaterial}
+            color={0x42a8ff}
+            roughness={1}
+            bumpScale={1}
+          />
         </mesh>
       ))}
 
@@ -126,7 +138,13 @@ const RailsTable = function () {
           position={pos}
           rotation={idx === 0 ? [0, 0, -Math.PI / 2] : [0, 0, Math.PI / 2]}
         >
-          <meshStandardMaterial attach="material" map={clothMaterial} />
+          <meshStandardMaterial
+            attach="material"
+            map={clothMaterial}
+            color={0x42a8ff}
+            roughness={1}
+            bumpScale={1}
+          />
         </mesh>
       ))}
     </>

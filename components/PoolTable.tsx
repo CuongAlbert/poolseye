@@ -5,7 +5,7 @@ import Pocket from "./Pocket";
 import RailsTable from "./RailsTable";
 
 function PoolTable() {
-  const cloth = require("../assets/textures/cloth.jpg");
+  const cloth = require("../assets/textures/cloth.png");
   const clothMaterial: Texture = useMemo(
     () => new TextureLoader().load(cloth),
     [cloth]
@@ -24,8 +24,8 @@ function PoolTable() {
         />
         <meshStandardMaterial
           attach="material"
-          color={0x42a8ff}
-          roughness={0.4}
+          // color={0x42a8ff}
+          roughness={1}
           bumpScale={1}
           map={clothMaterial}
         />
