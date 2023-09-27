@@ -17,7 +17,7 @@ import {
 import { BoxGeometry, Shape, ExtrudeGeometry } from "three";
 
 const RailsTable = function () {
-  const hardWood = require("../assets/textures/tableFloor.jpg");
+  const hardWood = require("../assets/textures/tablefloor.jpg");
   const railMaterial: Texture = useMemo(
     () => new TextureLoader().load(hardWood),
     [hardWood]
