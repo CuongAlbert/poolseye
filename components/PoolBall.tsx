@@ -26,7 +26,7 @@ function PoolBall({ r, position, textureURL, opacity }: PoolBallProps) {
       <meshStandardMaterial
         attach="material"
         color={0xffffff}
-        roughness={0.25}
+        roughness={0.05}
         metalness={0}
         map={ballTexture}
         transparent={true}

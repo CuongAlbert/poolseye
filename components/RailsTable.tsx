@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import React, { useMemo } from "react";
 import {
   TextureLoader,
@@ -5,6 +6,8 @@ import {
   BoxGeometry,
   Shape,
   ExtrudeGeometry,
+  Vector2,
+  RepeatWrapping,
 } from "three";
 
 import {
@@ -22,16 +25,23 @@ import {
 } from "../constants";
 
 const RailsTable = function () {
-  const hardWood = require("../assets/textures/tableFloor.jpg");
+  const hardWood = require("../assets/textures/Go.png");
   const railMaterial: Texture = useMemo(
     () => new TextureLoader().load(hardWood),
     [hardWood]
   );
-  const cloth = require("../assets/textures/cloth.jpg");
+  railMaterial.wrapS = THREE.RepeatWrapping;
+  railMaterial.wrapT = THREE.RepeatWrapping;
+  railMaterial.offset.set(0, 0);
+  const cloth = require("../assets/textures/mat_ban.png");
   const clothMaterial: Texture = useMemo(
     () => new TextureLoader().load(cloth),
     [cloth]
   );
+  // clothMaterial.offset = new Vector2(0, 1);
+  clothMaterial.wrapS = THREE.RepeatWrapping;
+  clothMaterial.wrapT = THREE.RepeatWrapping;
+  clothMaterial.offset.set(0, 0);
 
   const railSideGeometry: BoxGeometry = new BoxGeometry(...getRailSideGeometry);
 
@@ -87,13 +97,23 @@ const RailsTable = function () {
     <>
       {railSideCoordinate.map((pos, idx) => (
         <mesh key={idx} args={[railSideGeometry]} position={pos}>
-          <meshStandardMaterial attach="material" map={railMaterial} />
+          <meshStandardMaterial
+            attach="material"
+            map={railMaterial}
+            roughness={1}
+            bumpScale={1}
+          />
         </mesh>
       ))}
 
       {railTopCoordinate.map((pos, idx) => (
         <mesh key={idx} args={[railTopGeometry]} position={pos}>
-          <meshStandardMaterial attach="material" map={railMaterial} />
+          <meshStandardMaterial
+            attach="material"
+            map={railMaterial}
+            roughness={1}
+            bumpScale={1}
+          />
         </mesh>
       ))}
 

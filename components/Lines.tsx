@@ -19,7 +19,13 @@ function Lines(props: LinesProps) {
   return (
     <line>
       <bufferGeometry attach="geometry" ref={ref} />
-      <lineBasicMaterial attach="material" color="white" opacity={0} />
+      <lineBasicMaterial
+        attach="material"
+        color="white"
+        // opacity={1}
+        // transparent={true}
+        linewidth={3}
+      />
     </line>
   );
 }

@@ -58,7 +58,15 @@ export default function App() {
       transX.value = offset.value;
     })
     .onChange((event) => {
-      offset.value = transX.value + event.translationY / -432;
+      const step = transX.value + (event.translationY / -420) * 1;
+      if (step >= 0 && step <= 1) offset.value = step;
+    })
+    .onTouchesDown((event) => {
+      const firstTouch = event.allTouches[0];
+      const yValue = firstTouch.y;
+      offset.value = withTiming((420 - yValue) / 420, {
+        duration: 500,
+      });
     })
     .onFinalize((event) => {
       offset.value = withSpring(offset.value);
@@ -66,15 +74,13 @@ export default function App() {
     });
 
   const animatedStyles = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: offset.value * -432 },
-      { scale: withTiming(pressed.value ? 1.2 : 1) },
-    ],
-    backgroundColor: pressed.value ? "#FFE04B" : "#b58df1",
+    transform: [{ scale: withTiming(pressed.value ? 1.02 : 1) }],
+    // backgroundColor: pressed.value ? "#FFE04B" : "#b58df1",
   }));
 
   const pressed2: SharedValue<boolean> = useSharedValue(false);
   const offset2: SharedValue<number> = useSharedValue(0);
+  const moveX: SharedValue<number> = useSharedValue(0);
   const transX2: SharedValue<number> = useSharedValue(0);
 
   const pan2 = Gesture.Pan()
@@ -83,27 +89,24 @@ export default function App() {
       transX2.value = offset2.value;
     })
     .onChange((event) => {
-      offset2.value = transX2.value + event.translationX / -432;
+      offset2.value = transX2.value + event.translationX / 840;
+      moveX.value += offset2.value;
     })
     .onFinalize((event) => {
-      offset2.value = withSpring(offset2.value);
+      offset2.value = withSpring(0);
       pressed2.value = false;
     });
 
   const animatedStyles2 = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: (offset2.value * -432) / 10 },
-      { scale: withTiming(pressed2.value ? 1.2 : 1) },
-    ],
-    backgroundColor: pressed2.value ? "#FFE04B" : "#b58df1",
+    transform: [{ translateX: offset2.value * 840 }],
   }));
 
   const animatedStylesChangeView = useAnimatedStyle(() => ({
     transform: [
       { translateX: 0 },
-      { scale: withTiming(touch.value === true ? 1.2 : 1) },
+      { scale: withTiming(touch.value === true ? 1.1 : 1) },
     ],
-    backgroundColor: touch.value ? "#FFE04B" : "#b58df1",
+    // backgroundColor: touch.value ? "#FFE04B" : "#b58df1",
   }));
 
   return (
@@ -119,7 +122,7 @@ export default function App() {
           showCutPoint={true}
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset} // min = 0, max = 1
-          rotateAngle={offset2}
+          rotateAngle={moveX}
           // handleCheck={handleCheck}
           changeTargetView={changeView}
         />
@@ -127,43 +130,39 @@ export default function App() {
       </Canvas>
 
       <View style={styles.container}>
-        <TouchableOpacity
-          activeOpacity={0.4}
-          onPressIn={changeTarget}
-          onPressOut={stopChangeTarget}
-          className="h-16 w-16 ml-[55%] rounded-full pt-5 pl-3.5 "
-        >
-          <Animated.View
-            style={animatedStylesChangeView}
-            className="h-16 w-16 ml-[55%] rounded-full pt-5 pl-3.5 "
-          >
-            <Text className="text-gray-500">Press</Text>
-          </Animated.View>
-        </TouchableOpacity>
-
-        <GestureHandlerRootView className="h-[100%] flex-1 ml-5 absolute left-0">
-          <GestureDetector gesture={pan}>
-            <Animated.View
-              style={animatedStyles}
-              className="h-16 w-16 bg-white opacity-50 rounded-full justify-center items-center flex-col -pt-1"
-            >
-              <Text className="text-gray-500 ">Up</Text>
-              <Text className="text-gray-500 ">Down</Text>
-            </Animated.View>
-          </GestureDetector>
-        </GestureHandlerRootView>
-
-        <GestureHandlerRootView className="flex-1 absolute mr-5 right-0">
+        <GestureHandlerRootView className="flex-1 absolute  w-full border-white opacity-0 ">
           <GestureDetector gesture={pan2}>
             <Animated.View
               style={animatedStyles2}
-              className="h-16 w-16 bg-white opacity-50  bottom-20 rounded-full justify-center items-center flex-col -pt-1"
-            >
-              <Text className="text-gray-500 ">Left</Text>
-              <Text className="text-gray-500 ">Right</Text>
-            </Animated.View>
+              className="h-screen w-full bg-white justify-center items-center flex-col"
+            ></Animated.View>
           </GestureDetector>
         </GestureHandlerRootView>
+
+        <View className="h-1/2 top-[25%] ml-4 flex-1 justify-end absolute bg-gray- opacity-50 rounded-full">
+          <GestureHandlerRootView className="flex-1 -ml-2 absolute left-0 ">
+            <GestureDetector gesture={pan}>
+              <Animated.View
+                style={animatedStyles}
+                className="h-[420px] w-5 bg-white opacity-50 rounded-full justify-center items-center flex-col"
+              ></Animated.View>
+            </GestureDetector>
+          </GestureHandlerRootView>
+        </View>
+        <View className="absolute bottom-10 ml-2">
+          <TouchableOpacity
+            activeOpacity={0.4}
+            onPressIn={changeTarget}
+            onPressOut={stopChangeTarget}
+          >
+            <Animated.View
+              style={animatedStylesChangeView}
+              className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40"
+            >
+              <Text className="text-white font-semibold">Press</Text>
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   );
@@ -172,14 +171,11 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     color: "#999",
     fontSize: 12,
     position: "absolute",
-    border: 1,
-    bottom: 50,
-    borderRadius: 8,
     padding: 0,
-    marginTop: 4,
   },
 
   box: {

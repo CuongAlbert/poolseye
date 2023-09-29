@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import React, { useMemo } from "react";
 import { TextureLoader, Texture } from "three";
 import { TABLE_SIZE } from "../constants";
@@ -5,11 +6,15 @@ import Pocket from "./Pocket";
 import RailsTable from "./RailsTable";
 
 function PoolTable() {
-  const cloth = require("../assets/textures/cloth.png");
+  const cloth = require("../assets/textures/mat_ban.png");
   const clothMaterial: Texture = useMemo(
     () => new TextureLoader().load(cloth),
     [cloth]
   );
+  clothMaterial.wrapS = THREE.RepeatWrapping;
+  clothMaterial.wrapT = THREE.RepeatWrapping;
+  clothMaterial.offset.set(0, 0);
+  // clothMaterial.repeat.set(0, 0);
 
   return (
     <>
@@ -24,7 +29,7 @@ function PoolTable() {
         />
         <meshStandardMaterial
           attach="material"
-          // color={0x42a8ff}
+          color={0x42a8ff}
           roughness={1}
           bumpScale={1}
           map={clothMaterial}
