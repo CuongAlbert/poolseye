@@ -182,8 +182,6 @@ function Scene(props: SceneProps) {
     [eyePosition[0], eyePosition[1]],
     cueBall2D,
   ]);
-  // const meshRef = useRef<MeshProps>();
-  console.log("ref", cueLineRef);
 
   useFrame((state) => {
     const rotateCamera: number[] = [
@@ -200,7 +198,6 @@ function Scene(props: SceneProps) {
     );
     const lineToOb: Line = getFlowCueBall([cueLine, cueBall2D], objBall);
     if (cueLineRef.current) cueLineRef.current = lineToOb;
-    console.log("cueRef", cueLineRef);
     // if (cueLineRefGeo.current)
     //   cueLineRefGeo.current = new PlaneGeometry(
     //     BALL_DIAMETER,
@@ -303,7 +300,7 @@ function Scene(props: SceneProps) {
           transparent={true}
         />
       </mesh> */}
-      <Flow ref={cueLineRef} />
+      <Flow line={cueLineRef.current} />
 
       <line>
         <bufferGeometry attach="geometry" ref={Ref} />
