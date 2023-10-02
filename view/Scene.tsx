@@ -1,8 +1,7 @@
-import React, { ForwardRefExoticComponent, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import PoolTable from "../components/PoolTable";
-import { MeshProps, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
-import Lines from "../components/Lines";
 import Flow from "../components/Flow";
 
 import {
@@ -26,25 +25,13 @@ import {
   pointTranslate,
 } from "geometric";
 
-import {
-  SharedValue,
-  runOnJS,
-  runOnUI,
-  useDerivedValue,
-} from "react-native-reanimated";
+import { SharedValue } from "react-native-reanimated";
 import {
   BufferGeometry,
-  ExtrudeGeometry,
-  Material,
   Mesh,
   MeshStandardMaterial,
-  NormalBufferAttributes,
-  Object3DEventMap,
   PerspectiveCamera,
   PlaneGeometry,
-  Shape,
-  Texture,
-  TextureLoader,
   Vector3,
   WebGLRenderer,
 } from "three";
@@ -158,41 +145,43 @@ function Scene(props: SceneProps) {
   //   cueBall.slice(0, 2)
   // );
 
-  // let lookAtX: number = cueBall2D[0],
-  //   lookAtY: number = cueBall2D[1];
+  let lookAtX: number = cueBall2D[0],
+    lookAtY: number = cueBall2D[1];
 
-  // useFrame((state) => {
-  //   const cameraPositionX =
-  //     eyePosition[0] +
-  //     changeTargetView.value * (eyePositionB[0] - eyePosition[0]);
-  //   const cameraPositionY =
-  //     eyePosition[1] +
-  //     changeTargetView.value * (eyePositionB[1] - eyePosition[1]);
-  //   const lookAtX =
-  //     cueBall2D[0] + (objBall[0] - cueBall2D[0]) * changeTargetView.value;
-  //   const lookAtY =
-  //     cueBall2D[1] + (objBall[1] - cueBall2D[1]) * changeTargetView.value;
-
-  //   camera.position.x = cameraPositionX;
-  //   camera.position.y = cameraPositionY;
-  //   // camera.position.z = 0.36 + eyeHeight.value * 5.2;
-
-  //   camera.lookAt(lookAtX, lookAtY, BALL_DIAMETER / 2);
-  // });
   const Ref = useRef<BufferGeometry>(null!);
   const meshRef = useRef<Mesh>(null!);
   const cueLineRef = useRef<Line>([cueBall2D, objBall]);
 
   useFrame((state) => {
+    // set camera position
     const rotateCamera: number[] = [
       ...pointRotate(eyePosition, rotateAngle.value * twoBallAngle, cueBall2D),
       0.36 + eyeHeight.value * 5.2,
     ];
-    [camera.position.x, camera.position.y, camera.position.z] = rotateCamera;
-    camera.lookAt(...cueBall2D, BALL_DIAMETER / 2);
+    camera.position.x = rotateCamera[0];
+    camera.position.y = rotateCamera[1];
 
+    // set camera position when hold press
+    const cameraPositionX =
+      rotateCamera[0] +
+      changeTargetView.value * (eyePositionB[0] - rotateCamera[0]);
+    const cameraPositionY =
+      rotateCamera[1] +
+      changeTargetView.value * (eyePositionB[1] - rotateCamera[1]);
+    // set look at position when hold press
+    lookAtX =
+      cueBall2D[0] + (objBall[0] - cueBall2D[0]) * changeTargetView.value;
+    lookAtY =
+      cueBall2D[1] + (objBall[1] - cueBall2D[1]) * changeTargetView.value;
+
+    camera.position.x = cameraPositionX;
+    camera.position.y = cameraPositionY;
+    camera.position.z = 0.36 + eyeHeight.value * 5.2;
+
+    camera.updateProjectionMatrix();
+    camera.lookAt(lookAtX, lookAtY, BALL_DIAMETER / 2);
+    // set flow cue ball when camera position change
     const cueLine: Point = [camera.position.x, camera.position.y];
-
     const lineToOb: Line = getFlowCueBall([cueLine, cueBall2D], objBall);
     if (cueLineRef.current) cueLineRef.current = lineToOb;
 
@@ -200,9 +189,7 @@ function Scene(props: SceneProps) {
       BALL_DIAMETER,
       lineLength(lineToOb)
     );
-    // console.log(cueLineRef.current);
     if (meshRef.current) {
-      // if (meshRef.current) {
       meshRef.current.position.fromArray([
         ...lineMidpoint(lineToOb),
         BALL_DIAMETER / 2,
@@ -219,6 +206,8 @@ function Scene(props: SceneProps) {
         transparent: true,
       });
     }
+
+    // set cue line when camera position change
     const cueLineMidPoint: Vector3 = new Vector3(
       ...lineMidpoint([cueLine, cueBall2D]),
       BALL_DIAMETER / 2
@@ -238,22 +227,8 @@ function Scene(props: SceneProps) {
   camera.far = 1000;
   camera.up.set(0, 0, 1);
 
-  const rotateCamera: number[] = [
-    ...pointRotate(eyePosition, rotateAngle.value * twoBallAngle, cueBall2D),
-    0.36 + eyeHeight.value * 5.2,
-  ];
-
-  [camera.position.x, camera.position.y, camera.position.z] = rotateCamera;
-
   camera.updateProjectionMatrix();
   camera.lookAt(...cueBall2D, BALL_DIAMETER / 2);
-
-  // const cueLine: Point = [eyePosition[0], eyePosition[1]];
-  // const cueLine: Point = [rotateCamera[0], rotateCamera[1]];
-  // const cueLineMidPoint: Vector3 = new Vector3(
-  //   ...lineMidpoint([cueLine, cueBall2D]),
-  //   BALL_DIAMETER / 2
-  // );
 
   // let result;
   // if (minTrueCameraPosition[0] === maxTrueCameraPosition[0]) {
@@ -283,12 +258,6 @@ function Scene(props: SceneProps) {
   const fifteen: string = require("../assets/textures/15_basecolor.png");
   const point: string = require("../assets/textures/red_point.jpeg");
 
-  // show flow of cueBall
-  // const lineToOb = getFlowCueBall(
-  //   [cueLine, cueBall2D],
-  //   objBall
-  // );
-
   return (
     <React.Suspense>
       <PoolTable />
@@ -298,18 +267,6 @@ function Scene(props: SceneProps) {
         textureURL={six}
         opacity={1}
       />
-      {/* <mesh
-      // position={meshRef.current?.position}
-      // rotation={meshRef.current?.rotation}
-      >
-        <planeGeometry attach="geometry" ref={cueLineRefGeo} />
-        <meshStandardMaterial
-          attach="material"
-          color={0xffff}
-          opacity={0.2}
-          transparent={true}
-        />
-      </mesh> */}
       <Flow ref={meshRef} />
 
       <line>
