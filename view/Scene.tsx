@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { ForwardRefExoticComponent, useMemo, useRef } from "react";
 import PoolTable from "../components/PoolTable";
 import { MeshProps, useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
@@ -35,8 +35,11 @@ import {
 import {
   BufferGeometry,
   ExtrudeGeometry,
+  Material,
   Mesh,
   MeshStandardMaterial,
+  NormalBufferAttributes,
+  Object3DEventMap,
   PerspectiveCamera,
   PlaneGeometry,
   Shape,
@@ -177,11 +180,8 @@ function Scene(props: SceneProps) {
   //   camera.lookAt(lookAtX, lookAtY, BALL_DIAMETER / 2);
   // });
   const Ref = useRef<BufferGeometry>(null!);
-  // const cueLineRefGeo = useRef<PlaneGeometry>(null!);
-  const cueLineRef = useRef<Line>([
-    [eyePosition[0], eyePosition[1]],
-    cueBall2D,
-  ]);
+  const meshRef = useRef<Mesh>(null!);
+  const cueLineRef = useRef<Line>([cueBall2D, objBall]);
 
   useFrame((state) => {
     const rotateCamera: number[] = [
@@ -192,25 +192,37 @@ function Scene(props: SceneProps) {
     camera.lookAt(...cueBall2D, BALL_DIAMETER / 2);
 
     const cueLine: Point = [camera.position.x, camera.position.y];
+
+    const lineToOb: Line = getFlowCueBall([cueLine, cueBall2D], objBall);
+    if (cueLineRef.current) cueLineRef.current = lineToOb;
+
+    const flowCueBallGeometry = new PlaneGeometry(
+      BALL_DIAMETER,
+      lineLength(lineToOb)
+    );
+    // console.log(cueLineRef.current);
+    if (meshRef.current) {
+      // if (meshRef.current) {
+      meshRef.current.position.fromArray([
+        ...lineMidpoint(lineToOb),
+        BALL_DIAMETER / 2,
+      ]);
+      meshRef.current.rotation.set(
+        0,
+        0,
+        angleToRadians(lineAngle(lineToOb) - 90)
+      );
+      meshRef.current.geometry = flowCueBallGeometry;
+      meshRef.current.material = new MeshStandardMaterial({
+        color: 0xffff,
+        opacity: 0.2,
+        transparent: true,
+      });
+    }
     const cueLineMidPoint: Vector3 = new Vector3(
       ...lineMidpoint([cueLine, cueBall2D]),
       BALL_DIAMETER / 2
     );
-    const lineToOb: Line = getFlowCueBall([cueLine, cueBall2D], objBall);
-    if (cueLineRef.current) cueLineRef.current = lineToOb;
-    // if (cueLineRefGeo.current)
-    //   cueLineRefGeo.current = new PlaneGeometry(
-    //     BALL_DIAMETER,
-    //     lineLength(lineToOb)
-    //   );
-    // if (meshRef.current) {
-    //   meshRef.current.position = [...lineMidpoint(lineToOb), BALL_DIAMETER / 2];
-    //   meshRef.current.rotation = [
-    //     0,
-    //     0,
-    //     angleToRadians(lineAngle(lineToOb) - 90),
-    //   ];
-    // }
     const points: Vector3[] = [];
     points.push(new Vector3(...cueLineMidPoint));
     points.push(new Vector3(...new Vector3(...cueBall2D, BALL_DIAMETER / 2)));
@@ -277,8 +289,6 @@ function Scene(props: SceneProps) {
   //   objBall
   // );
 
-  console.log("line", cueLineRef.current);
-
   return (
     <React.Suspense>
       <PoolTable />
@@ -300,7 +310,7 @@ function Scene(props: SceneProps) {
           transparent={true}
         />
       </mesh> */}
-      <Flow line={cueLineRef.current} />
+      <Flow ref={meshRef} />
 
       <line>
         <bufferGeometry attach="geometry" ref={Ref} />
