@@ -44,7 +44,9 @@ export type SceneProps = {
   eyeHeight: SharedValue<number>;
   eyeDistance: SharedValue<number>;
   rotateAngle: SharedValue<number>; // number
+  rotateAngleState: SharedValue<boolean>;
   changeTargetView: SharedValue<number>;
+  changeTargetViewState: SharedValue<boolean>;
 };
 
 function Scene(props: SceneProps) {
@@ -59,7 +61,9 @@ function Scene(props: SceneProps) {
     eyeHeight,
     eyeDistance,
     rotateAngle,
+    rotateAngleState,
     changeTargetView,
+    changeTargetViewState,
   } = props;
 
   const [eyePositionB, objBall, aimPoint, aiming1, aiming2] = useMemo(
@@ -145,32 +149,33 @@ function Scene(props: SceneProps) {
     lookAtY: number = cueBall2D[1];
 
   const Ref = useRef<BufferGeometry>(null!);
-  console.log(eyePosition[0], eyePosition[1]);
-  console.log(camera.position.x, camera.position.y);
+
+  const posX_B = eyePositionB[0];
+  const posY_B = eyePositionB[1];
+
   useFrame(() => {
-    // console.log(changeTargetView.value);
-
-    const cameraPositionX =
-      eyePosition[0] +
-      changeTargetView.value * (eyePositionB[0] - eyePosition[0]);
-    const cameraPositionY =
-      eyePosition[1] +
-      changeTargetView.value * (eyePositionB[1] - eyePosition[1]);
-    lookAtX =
-      cueBall2D[0] + (objBall[0] - cueBall2D[0]) * changeTargetView.value;
-    lookAtY =
-      cueBall2D[1] + (objBall[1] - cueBall2D[1]) * changeTargetView.value;
-    // camera.updateProjectionMatrix();
-    camera.position.x = cameraPositionX;
-    camera.position.y = cameraPositionY;
-
-    camera.position.z = 0.36 + eyeHeight.value * 5.2;
-
+    // console.log(changeTargetViewState.value);
     const rotateCamera: number[] = [
       ...pointRotate(eyePosition, rotateAngle.value * twoBallAngle, cueBall2D),
       0.36 + eyeHeight.value * 5.2,
     ];
-    [camera.position.x, camera.position.y, camera.position.z] = rotateCamera;
+    camera.position.x = rotateCamera[0];
+    camera.position.y = rotateCamera[1];
+    const posX_A = rotateCamera[0];
+    const posY_A = rotateCamera[1];
+
+    const cameraPositionX = posX_A + changeTargetView.value * (posX_B - posX_A);
+    const cameraPositionY = posY_A + changeTargetView.value * (posY_B - posY_A);
+    lookAtX =
+      cueBall2D[0] + (objBall[0] - cueBall2D[0]) * changeTargetView.value;
+    lookAtY =
+      cueBall2D[1] + (objBall[1] - cueBall2D[1]) * changeTargetView.value;
+
+    camera.position.x = cameraPositionX;
+    camera.position.y = cameraPositionY;
+    camera.updateProjectionMatrix();
+
+    camera.position.z = 0.36 + eyeHeight.value * 5.2;
     camera.lookAt(lookAtX, lookAtY, BALL_DIAMETER / 2);
     const cueLine: Point = [camera.position.x, camera.position.y];
     const cueLineMidPoint: Vector3 = new Vector3(

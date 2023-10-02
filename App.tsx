@@ -83,14 +83,14 @@ export default function App() {
     ],
   }));
 
-  const pressed2: SharedValue<boolean> = useSharedValue(false);
+  const pressedState: SharedValue<boolean> = useSharedValue(false);
   const offset2: SharedValue<number> = useSharedValue(0);
   const moveX: SharedValue<number> = useSharedValue(0);
   const transX2: SharedValue<number> = useSharedValue(0);
 
   const pan2 = Gesture.Pan()
     .onBegin((event) => {
-      pressed2.value = true;
+      pressedState.value = true;
       transX2.value = offset2.value;
     })
     .onChange((event) => {
@@ -99,7 +99,7 @@ export default function App() {
     })
     .onFinalize((event) => {
       offset2.value = withSpring(0);
-      pressed2.value = false;
+      pressedState.value = false;
     });
 
   const animatedStyles2 = useAnimatedStyle(() => ({
@@ -131,8 +131,10 @@ export default function App() {
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset} // min = 0, max = 1
           rotateAngle={moveX} //rotateAngle
+          rotateAngleState={pressedState}
           // handleCheck={handleCheck}
           changeTargetView={changeView}
+          changeTargetViewState={touch}
         />
         {/* <Controls target={target} distance={2} cutAngle={15} /> */}
       </Canvas>
