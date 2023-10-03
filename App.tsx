@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
 import Lights from "./components/Lights";
 import Adjust from "./components/Adjust";
-import { Text, View, StyleSheet, Button, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 
 import Animated, {
   Easing,
@@ -95,7 +102,11 @@ export default function App() {
     })
     .onChange((event) => {
       offset2.value = transX2.value + event.translationX / 420;
-      moveX.value += offset2.value;
+
+      if (Math.abs(moveX.value + offset2.value) <= 2) {
+        moveX.value += offset2.value;
+        console.log(moveX.value);
+      }
     })
     .onFinalize((event) => {
       offset2.value = withSpring(0);
@@ -116,6 +127,33 @@ export default function App() {
   const [rotateAngle, setRotateAngle] = useState<number>(0);
   const changeRotateAngleValue = (e: number) => {
     setRotateAngle(e);
+  };
+
+  const [count, setCount] = useState(0);
+  const [isAutoCounting, setIsAutoCounting] = useState(false);
+  let TimerStr: string;
+
+  useEffect(() => {
+    let timer: number;
+
+    if (isAutoCounting && count < 10) {
+      timer = setInterval(() => {
+        setCount((prevCount) => prevCount + 1);
+      }, 1000); // Increment every 1 second (1000 milliseconds)
+    }
+
+    return () => {
+      clearInterval(timer); // Clear the interval when the component unmounts
+    };
+  }, [count, isAutoCounting]);
+
+  const startAutoCount = () => {
+    setIsAutoCounting(true);
+  };
+
+  const resetCount = () => {
+    setIsAutoCounting(false);
+    setCount(0);
   };
 
   return (
@@ -163,7 +201,7 @@ export default function App() {
           </GestureHandlerRootView>
         </View>
 
-        <View className="absolute bottom-10 ml-2">
+        <View className="w-full absolute flex-row justify-between bottom-10 px-4">
           <TouchableOpacity
             activeOpacity={0.4}
             onPressIn={changeTarget}
@@ -173,9 +211,39 @@ export default function App() {
               style={animatedStylesChangeView}
               className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40"
             >
-              <Text className="text-white font-semibold">Press</Text>
+              <Text className="text-white font-semibold">Change</Text>
             </Animated.View>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.4}
+            // onPressIn={changeTarget}
+            // onPressOut={stopChangeTarget}
+            onPress={resetCount}
+            disabled={!isAutoCounting && count === 0}
+          >
+            <Animated.View className="h-12 w-12 rounded-full flex items-center justify-center border-[5px] border-white opacity-40">
+              <Text className="text-white font-semibold"></Text>
+            </Animated.View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.4}
+            // onPressIn={changeTarget}
+            // onPressOut={stopChangeTarget}
+            onPress={startAutoCount}
+            disabled={isAutoCounting || count === 10}
+          >
+            <Animated.View className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40">
+              <Text className="text-white font-semibold">Start</Text>
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
+
+        <View className="w-full h-auto  mt-20">
+          <Text className="text-[80px] font-semibold text-white text-center">
+            {count}
+          </Text>
         </View>
 
         {/* <Adjust

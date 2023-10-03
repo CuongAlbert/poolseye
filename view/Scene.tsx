@@ -193,7 +193,7 @@ function Scene(props: SceneProps) {
 
   gl.setClearColor(0x0000, 1);
 
-  camera.fov = 50;
+  camera.fov = 40;
   camera.aspect = 0.45;
   camera.near = 0.1;
   camera.far = 1000;
