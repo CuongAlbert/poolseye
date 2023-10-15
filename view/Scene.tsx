@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useRef } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import PoolTable from "../components/PoolTable";
 import { useFrame, useThree } from "@react-three/fiber";
 import PoolBall from "../components/PoolBall";
@@ -41,12 +41,15 @@ export type SceneProps = {
   cutAngle: number;
   side: string;
   showAimPoint: boolean;
+  handleCheck: Function;
   eyeHeight: SharedValue<number>;
   eyeDistance: SharedValue<number>;
   rotateAngle: SharedValue<number>; // number
   rotateAngleState: SharedValue<boolean>;
   changeTargetView: SharedValue<number>;
   changeTargetViewState: SharedValue<boolean>;
+  isAutoCounting: boolean;
+  countDown: number;
 };
 
 function Scene(props: SceneProps) {
@@ -61,10 +64,15 @@ function Scene(props: SceneProps) {
     eyeHeight,
     eyeDistance,
     rotateAngle,
+    handleCheck,
     rotateAngleState,
     changeTargetView,
     changeTargetViewState,
+    isAutoCounting,
+    countDown,
   } = props;
+
+  console.log("count", countDown);
 
   const [eyePositionB, objBall, aimPoint, aiming1, aiming2] = useMemo(
     () =>
@@ -216,25 +224,30 @@ function Scene(props: SceneProps) {
     BALL_DIAMETER / 2
   );
 
-  // let result;
-  // if (minTrueCameraPosition[0] === maxTrueCameraPosition[0]) {
-  //   if (minTrueCameraPosition[1] < maxTrueCameraPosition[1])
-  //     result =
-  //       cueLine[1] > minTrueCameraPosition[1] &&
-  //       cueLine[1] < maxTrueCameraPosition[1];
-  //   if (minTrueCameraPosition[1] > maxTrueCameraPosition[1])
-  //     result =
-  //       cueLine[1] < minTrueCameraPosition[1] &&
-  //       cueLine[1] > maxTrueCameraPosition[1];
-  // }
-  // if (minTrueCameraPosition[0] < maxTrueCameraPosition[0])
-  //   result =
-  //     cueLine[0] > minTrueCameraPosition[0] &&
-  //     cueLine[0] < maxTrueCameraPosition[0];
-  // if (minTrueCameraPosition[0] > maxTrueCameraPosition[0])
-  //   result =
-  //     cueLine[0] < minTrueCameraPosition[0] &&
-  //     cueLine[0] > maxTrueCameraPosition[0];
+  let result;
+  if (minTrueCameraPosition[0] === maxTrueCameraPosition[0]) {
+    if (minTrueCameraPosition[1] < maxTrueCameraPosition[1])
+      result =
+        cueLine[1] > minTrueCameraPosition[1] &&
+        cueLine[1] < maxTrueCameraPosition[1];
+    if (minTrueCameraPosition[1] > maxTrueCameraPosition[1])
+      result =
+        cueLine[1] < minTrueCameraPosition[1] &&
+        cueLine[1] > maxTrueCameraPosition[1];
+  }
+  if (minTrueCameraPosition[0] < maxTrueCameraPosition[0])
+    result =
+      cueLine[0] > minTrueCameraPosition[0] &&
+      cueLine[0] < maxTrueCameraPosition[0];
+  if (minTrueCameraPosition[0] > maxTrueCameraPosition[0])
+    result =
+      cueLine[0] < minTrueCameraPosition[0] &&
+      cueLine[0] > maxTrueCameraPosition[0];
+
+  console.log("result", result);
+  handleCheck(result);
+  // const [gameresult, setGameResult] = useState<boolean>(false);
+  // setGameResult(result);
 
   const zero: string = require("../assets/textures/0.png");
   const ten: string = require("../assets/textures/10.png");

@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
 import Lights from "./components/Lights";
 import Adjust from "./components/Adjust";
+
 import {
   Text,
   View,
@@ -72,7 +73,7 @@ export default function App() {
     .onTouchesDown((event) => {
       const firstTouch = event.allTouches[0];
       const yValue = firstTouch.y;
-      console.log("Y Value:", yValue);
+
       offset.value = withTiming((420 - yValue) / 420, {
         duration: 500,
       });
@@ -95,22 +96,33 @@ export default function App() {
   const moveX: SharedValue<number> = useSharedValue(0);
   const transX2: SharedValue<number> = useSharedValue(0);
 
-  const pan2 = Gesture.Pan()
-    .onBegin((event) => {
-      pressedState.value = true;
-      transX2.value = offset2.value;
-    })
-    .onChange((event) => {
-      offset2.value = transX2.value + event.translationX / 420;
+  const [isAutoCounting, setIsAutoCounting] = useState(false);
 
-      if (Math.abs(moveX.value + offset2.value) <= 2) {
-        moveX.value += offset2.value;
-        console.log(moveX.value);
+  console.log("isAutoCounting", isAutoCounting);
+
+  const pan2 = Gesture.Pan()
+
+    .onBegin((event) => {
+      if (isAutoCounting == true) {
+        pressedState.value = true;
+        transX2.value = offset2.value;
       }
     })
+    .onChange((event) => {
+      if (isAutoCounting == true) {
+        offset2.value = transX2.value + event.translationX / 420;
+
+        if (Math.abs(moveX.value + offset2.value) <= 2) {
+          moveX.value += offset2.value;
+        }
+      }
+    })
+
     .onFinalize((event) => {
-      offset2.value = withSpring(0);
-      pressedState.value = false;
+      if (isAutoCounting == true) {
+        offset2.value = withSpring(0);
+        pressedState.value = false;
+      }
     });
 
   const animatedStyles2 = useAnimatedStyle(() => ({
@@ -129,17 +141,49 @@ export default function App() {
     setRotateAngle(e);
   };
 
-  const [count, setCount] = useState(0);
-  const [isAutoCounting, setIsAutoCounting] = useState(false);
+  const [count, setCount] = useState(10);
+  const [barColor, setBarColor] = useState("blue");
+  const [notiDisplay, setNotiDisplay] = useState("flex");
+
+  const [gameResult, setGameResult] = useState<boolean>(false);
+  // const [gameStatus, setGameStatus] = useState<string>("");
+
+  // Callback function to receive the result from the child component
+  const handleCheck = (result: boolean) => {
+    setGameResult(result);
+  };
+
+  // if (gameResult === false) {
+  //   setGameStatus("GAME OVER");
+  // } else {
+  //   setGameStatus("YOU PASS");
+  // }
+
+  console.log("appResult", gameResult);
+
   let TimerStr: string;
 
   useEffect(() => {
     let timer: number;
 
-    if (isAutoCounting && count < 10) {
+    if (isAutoCounting && count > 0) {
       timer = setInterval(() => {
-        setCount((prevCount) => prevCount + 1);
+        setCount((prevCount) => prevCount - 1);
       }, 1000); // Increment every 1 second (1000 milliseconds)
+    }
+
+    if (count === 0) {
+      timer = setInterval(() => {
+        setNotiDisplay("flex");
+      }, 1000); // Increment every 1 second (1000 milliseconds)
+    }
+
+    if (count == 10) setNotiDisplay("none");
+
+    if (count > 3) {
+      setBarColor("blue");
+    } else {
+      setBarColor("red");
     }
 
     return () => {
@@ -152,8 +196,8 @@ export default function App() {
   };
 
   const resetCount = () => {
-    setIsAutoCounting(false);
-    setCount(0);
+    // setIsAutoCounting(false);
+    setCount(10);
   };
 
   return (
@@ -170,11 +214,12 @@ export default function App() {
           eyeDistance={offset} // min = 0, max = 1
           rotateAngle={moveX} //rotateAngle
           rotateAngleState={pressedState}
-          // handleCheck={handleCheck}
+          handleCheck={handleCheck}
           changeTargetView={changeView}
           changeTargetViewState={touch}
+          isAutoCounting={isAutoCounting}
+          countDown={count}
         />
-        {/* <Controls target={target} distance={2} cutAngle={15} /> */}
       </Canvas>
 
       <View style={styles.container}>
@@ -232,7 +277,7 @@ export default function App() {
             // onPressIn={changeTarget}
             // onPressOut={stopChangeTarget}
             onPress={startAutoCount}
-            disabled={isAutoCounting || count === 10}
+            disabled={isAutoCounting || count === 0}
           >
             <Animated.View className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40">
               <Text className="text-white font-semibold">Start</Text>
@@ -240,42 +285,55 @@ export default function App() {
           </TouchableOpacity>
         </View>
 
-        <View className="w-full h-auto  mt-20">
+        <View className=" bg-gray-800 rounded-full mx-1 p-1 mt-16">
+          {/* <LoaderBar status={isAutoCounting}></LoaderBar> */}
+          <View
+            className="h-4 rounded-full"
+            style={[
+              {
+                backgroundColor: barColor,
+                width: `${(count / 10) * 100}%`,
+              },
+            ]}
+          />
+        </View>
+        <View className="w-full h-auto mt-4">
           <Text className="text-[80px] font-semibold text-white text-center">
             {count}
           </Text>
         </View>
 
-        {/* <Adjust
-          label="Eye Height"
-          min={0}
-          max={1.5}
-          changeValue={changeEyeHeightValue}
-          value={eyeHeight}
-        />
+        <View
+          className=" h-screen w-full absolute items-center justify-center"
+          style={[
+            {
+              display: notiDisplay,
+            },
+          ]}
+        >
+          <View className="w-[320px] h-[320px] bg-black/80 rounded-2xl border-[2.5px] border-gray-500 p-6 opacity-80">
+            <Text className="text-white text-center text-3xl font-bold mt-12 uppercase">
+              {gameResult ? "You Pass" : "Game Over"}
+            </Text>
+            <Text className="text-center text-xl font-semibold text-white mt-2"></Text>
 
-
-        <Adjust
-          label="Rotate"
-          min={-50}
-          max={50}
-          changeValue={changeRotateAngleValue}
-          value={rotateAngle}
-        /> */}
+            <TouchableOpacity
+              activeOpacity={0.4}
+              // onPressIn={changeTarget}
+              // onPressOut={stopChangeTarget}
+              onPress={resetCount}
+              disabled={!isAutoCounting && count === 0}
+              className="mx-auto mt-12"
+            >
+              <Animated.View className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 ">
+                <Text className="text-white font-semibold">
+                  {gameResult ? "Next Round" : "Play Again"}
+                </Text>
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
-
-      {/* <View
-        style={{
-          backgroundColor: checkValue ? "green" : "red",
-          cursor: "pointer",
-          borderRadius: 5,
-          width: 60,
-          height: 30,
-          top: 50,
-          left: "46%",
-          position: "absolute",
-        }}
-      ></View> */}
     </>
   );
 }
@@ -295,5 +353,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#b58df1",
     borderRadius: 20,
     marginVertical: 64,
+  },
+  progressBar: {
+    height: 20,
   },
 });
