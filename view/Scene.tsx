@@ -185,18 +185,21 @@ function Scene(props: SceneProps) {
 
     camera.position.z = 0.36 + eyeHeight.value * 5.2;
     camera.lookAt(lookAtX, lookAtY, BALL_DIAMETER / 2);
-    const cueLine: Point = [camera.position.x, camera.position.y];
-    const cueLineMidPoint: Vector3 = new Vector3(
-      ...lineMidpoint([cueLine, cueBall2D]),
-      BALL_DIAMETER / 2
-    );
 
-    const points: Vector3[] = [];
-    points.push(new Vector3(...cueLineMidPoint));
-    points.push(new Vector3(...new Vector3(...cueBall2D, BALL_DIAMETER / 2)));
+    if (rotateAngleState.value) {
+      const cueLine: Point = [camera.position.x, camera.position.y];
+      const cueLineMidPoint: Vector3 = new Vector3(
+        ...lineMidpoint([cueLine, cueBall2D]),
+        BALL_DIAMETER / 2
+      );
 
-    // useLayoutEffect(() => {
-    if (Ref.current) Ref.current.setFromPoints(points);
+      const points: Vector3[] = [];
+      points.push(new Vector3(...cueLineMidPoint));
+      points.push(new Vector3(...new Vector3(...cueBall2D, BALL_DIAMETER / 2)));
+
+      // useLayoutEffect(() => {
+      if (Ref.current) Ref.current.setFromPoints(points);
+    }
   });
 
   gl.setClearColor(0x0000, 1);
@@ -217,12 +220,18 @@ function Scene(props: SceneProps) {
   camera.updateProjectionMatrix();
   camera.lookAt(...cueBall2D, BALL_DIAMETER / 2);
 
-  // const cueLine: Point = [eyePosition[0], eyePosition[1]];
-  const cueLine: Point = [rotateCamera[0], rotateCamera[1]];
+  const cueLine: Point = [camera.position.x, camera.position.y];
   const cueLineMidPoint: Vector3 = new Vector3(
     ...lineMidpoint([cueLine, cueBall2D]),
     BALL_DIAMETER / 2
   );
+
+  const points: Vector3[] = [];
+  points.push(new Vector3(...cueLineMidPoint));
+  points.push(new Vector3(...new Vector3(...cueBall2D, BALL_DIAMETER / 2)));
+
+  // useLayoutEffect(() => {
+  if (Ref.current) Ref.current.setFromPoints(points);
 
   let result;
   if (minTrueCameraPosition[0] === maxTrueCameraPosition[0]) {

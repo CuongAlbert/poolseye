@@ -142,22 +142,18 @@ export default function App() {
   };
 
   const [count, setCount] = useState(10);
-  const [barColor, setBarColor] = useState("blue");
+  const [barColor, setBarColor] = useState("#22c55e");
   const [notiDisplay, setNotiDisplay] = useState("flex");
 
   const [gameResult, setGameResult] = useState<boolean>(false);
+  const [round, setRound] = useState<number>(1);
+
   // const [gameStatus, setGameStatus] = useState<string>("");
 
   // Callback function to receive the result from the child component
   const handleCheck = (result: boolean) => {
     setGameResult(result);
   };
-
-  // if (gameResult === false) {
-  //   setGameStatus("GAME OVER");
-  // } else {
-  //   setGameStatus("YOU PASS");
-  // }
 
   console.log("appResult", gameResult);
 
@@ -181,7 +177,7 @@ export default function App() {
     if (count == 10) setNotiDisplay("none");
 
     if (count > 3) {
-      setBarColor("blue");
+      setBarColor("#22c55e");
     } else {
       setBarColor("red");
     }
@@ -198,8 +194,19 @@ export default function App() {
   const resetCount = () => {
     // setIsAutoCounting(false);
     setCount(10);
+    setRound(1);
   };
 
+  const nextRound = () => {
+    setCount(10);
+    if (count === 0) {
+      if (gameResult === false) {
+        setRound(0);
+      } else {
+        setRound((prevCount) => prevCount + 1);
+      }
+    }
+  };
   return (
     <>
       <Canvas className="webGL">
@@ -285,22 +292,41 @@ export default function App() {
           </TouchableOpacity>
         </View>
 
-        <View className=" bg-gray-800 rounded-full mx-1 p-1 mt-16">
-          {/* <LoaderBar status={isAutoCounting}></LoaderBar> */}
-          <View
-            className="h-4 rounded-full"
-            style={[
-              {
-                backgroundColor: barColor,
-                width: `${(count / 10) * 100}%`,
-              },
-            ]}
-          />
-        </View>
-        <View className="w-full h-auto mt-4">
-          <Text className="text-[80px] font-semibold text-white text-center">
-            {count}
-          </Text>
+        <View className="w-full h-14  mt-10 flex-row px-2">
+          <View className="w-20 h-20 bg-black z-[1000px] border-[3px] border-green-500 rounded-xl p-2 flex justify-center items-center">
+            <Text className="text-green-500 font-semibold uppercase text-center">
+              Round
+            </Text>
+            <Text className="text-green-500 font-bold text-4xl text-center">
+              {round}
+            </Text>
+          </View>
+
+          <View className="w-[250px] bg-gray-400/50 -ml-[10px] rounded-r-lg py-2 pr-2">
+            <View className="w-full bg-gray-800/50 rounded-full p-1">
+              <View
+                className="h-2.5 rounded-full opacity-80"
+                style={[
+                  {
+                    backgroundColor: barColor,
+                    width: `${(count / 10) * 100}%`,
+                  },
+                ]}
+              />
+            </View>
+
+            <View className="w-full mt-1.5 bg-gray-800/50 rounded-full p-1">
+              <View
+                className="h-2.5 rounded-full opacity-80"
+                style={[
+                  {
+                    backgroundColor: "yellow",
+                    width: `${(round / 10 - 0.1) * 100}%`,
+                  },
+                ]}
+              />
+            </View>
+          </View>
         </View>
 
         <View
@@ -321,7 +347,7 @@ export default function App() {
               activeOpacity={0.4}
               // onPressIn={changeTarget}
               // onPressOut={stopChangeTarget}
-              onPress={resetCount}
+              onPress={gameResult ? nextRound : resetCount}
               disabled={!isAutoCounting && count === 0}
               className="mx-auto mt-12"
             >
