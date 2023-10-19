@@ -25,7 +25,11 @@ import {
 } from "../constants";
 
 const RailsTable = function () {
+<<<<<<< HEAD
+  const hardWood = require("../assets/textures/tablefloor.jpg");
+=======
   const hardWood = require("../assets/textures/Go.png");
+>>>>>>> origin/main
   const railMaterial: Texture = useMemo(
     () => new TextureLoader().load(hardWood),
     [hardWood]

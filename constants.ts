@@ -2,7 +2,7 @@ import { Point, angleToDegrees } from "geometric";
 import { Vector3 } from "three";
 
 // 1px = 10cm
-let zoom = 2;
+let zoom = 2.5;
 export const LIGHT_PARAM = {
   LIGHT_HEIGHT: 30 / zoom,
   LIGHT_ROW: 6 / zoom,
