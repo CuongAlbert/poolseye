@@ -9,9 +9,9 @@ import {
   lineInterpolate,
   angleToRadians,
   lineLength,
-  angleToDegrees,
   Point,
   Line,
+  lineTranslate,
 } from "geometric";
 
 // get random Object Ball
@@ -154,7 +154,7 @@ export const getOBAndCB = (
 ): [
   eyePositionB: Point,
   objBall: Point,
-  aimPoint: number[],
+  aimPoint: Point,
   getAimingLine:
     | {
         aimingLine: Line;
@@ -290,7 +290,7 @@ export const getOBAndCB = (
   return [
     eyePositionB,
     objBall,
-    [...aimPoint, BALL_DIAMETER / 2],
+    aimPoint,
     getAimingLine(180 - cutAngle),
     getAimingLine(cutAngle - 180),
   ];
@@ -316,4 +316,26 @@ export const getLimitPosition = (
     eyeDistance
   );
   return [eyeLimitPosition, aimPoint1];
+};
+
+export const getFlowCueBall = (line: Line, objBall: Point): Line => {
+  const reverseLine = lineRotate(line, 180, line[1]);
+  const length = lineLength([line[1], objBall]);
+  const endOfReverseLine = pointTranslate(
+    line[1],
+    lineAngle(reverseLine) - 180,
+    length
+  );
+  return [line[1], endOfReverseLine];
+  // lineTranslate(
+  //   [reverseLine[1], endOfReverseLine],
+  //   90 + lineAngle(reverseLine),
+  //   BALL_DIAMETER / 2
+  // ),
+  // lineTranslate(
+  //   [reverseLine[1], endOfReverseLine],
+  //   -90 + lineAngle(reverseLine),
+  //   BALL_DIAMETER / 2
+  // ),
+  // ];
 };

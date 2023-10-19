@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Scene from "./view/Scene";
@@ -12,6 +13,13 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+=======
+import React from "react";
+import { Canvas } from "@react-three/fiber";
+import Scene from "./view/Scene";
+import Lights from "./components/Lights";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+>>>>>>> origin/main
 
 import Animated, {
   Easing,
@@ -73,11 +81,17 @@ export default function App() {
     .onTouchesDown((event) => {
       const firstTouch = event.allTouches[0];
       const yValue = firstTouch.y;
+<<<<<<< HEAD
 
       offset.value = withTiming((420 - yValue) / 420, {
         duration: 500,
       });
       // offset.value = (420 - yValue) / 420;
+=======
+      offset.value = withTiming((420 - yValue) / 420, {
+        duration: 500,
+      });
+>>>>>>> origin/main
     })
     .onFinalize((event) => {
       offset.value = withSpring(offset.value);
@@ -85,6 +99,7 @@ export default function App() {
     });
 
   const animatedStyles = useAnimatedStyle(() => ({
+<<<<<<< HEAD
     transform: [
       // { translateY: offset.value * -432 },
       { scale: withTiming(pressed.value ? 1.02 : 1) },
@@ -92,6 +107,13 @@ export default function App() {
   }));
 
   const pressedState: SharedValue<boolean> = useSharedValue(false);
+=======
+    transform: [{ scale: withTiming(pressed.value ? 1.02 : 1) }],
+    // backgroundColor: pressed.value ? "#FFE04B" : "#b58df1",
+  }));
+
+  const pressed2: SharedValue<boolean> = useSharedValue(false);
+>>>>>>> origin/main
   const offset2: SharedValue<number> = useSharedValue(0);
   const moveX: SharedValue<number> = useSharedValue(0);
   const transX2: SharedValue<number> = useSharedValue(0);
@@ -109,6 +131,7 @@ export default function App() {
       }
     })
     .onChange((event) => {
+<<<<<<< HEAD
       if (isAutoCounting == true) {
         offset2.value = transX2.value + event.translationX / 420;
 
@@ -116,9 +139,14 @@ export default function App() {
           moveX.value += offset2.value;
         }
       }
+=======
+      offset2.value = transX2.value + event.translationX / 840;
+      moveX.value += offset2.value;
+>>>>>>> origin/main
     })
 
     .onFinalize((event) => {
+<<<<<<< HEAD
       if (isAutoCounting == true) {
         offset2.value = withSpring(0);
         pressedState.value = false;
@@ -127,6 +155,14 @@ export default function App() {
 
   const animatedStyles2 = useAnimatedStyle(() => ({
     transform: [{ translateX: offset2.value * 420 }],
+=======
+      offset2.value = withSpring(0);
+      pressed2.value = false;
+    });
+
+  const animatedStyles2 = useAnimatedStyle(() => ({
+    transform: [{ translateX: offset2.value * 840 }],
+>>>>>>> origin/main
   }));
 
   const animatedStylesChangeView = useAnimatedStyle(() => ({
@@ -134,6 +170,10 @@ export default function App() {
       { translateX: 0 },
       { scale: withTiming(touch.value === true ? 1.1 : 1) },
     ],
+<<<<<<< HEAD
+=======
+    // backgroundColor: touch.value ? "#FFE04B" : "#b58df1",
+>>>>>>> origin/main
   }));
 
   const [rotateAngle, setRotateAngle] = useState<number>(0);
@@ -217,11 +257,17 @@ export default function App() {
           cutAngle={15}
           side="right"
           showAimPoint={true}
+          showCutPoint={true}
           eyeHeight={offset} // min = 1.8, max = 7
           eyeDistance={offset} // min = 0, max = 1
+<<<<<<< HEAD
           rotateAngle={moveX} //rotateAngle
           rotateAngleState={pressedState}
           handleCheck={handleCheck}
+=======
+          rotateAngle={moveX}
+          // handleCheck={handleCheck}
+>>>>>>> origin/main
           changeTargetView={changeView}
           changeTargetViewState={touch}
           isAutoCounting={isAutoCounting}
@@ -234,17 +280,26 @@ export default function App() {
           <GestureDetector gesture={pan2}>
             <Animated.View
               style={animatedStyles2}
+<<<<<<< HEAD
               className="h-screen w-full  bg-white justify-center items-center flex-col"
+=======
+              className="h-screen w-full bg-white justify-center items-center flex-col"
+>>>>>>> origin/main
             ></Animated.View>
           </GestureDetector>
         </GestureHandlerRootView>
 
+<<<<<<< HEAD
         <View className="h-1/2 top-[25%]  ml-4 flex-1  justify-end absolute bg-gray- opacity-50 rounded-full">
+=======
+        <View className="h-1/2 top-[25%] ml-4 flex-1 justify-end absolute bg-gray- opacity-50 rounded-full">
+>>>>>>> origin/main
           <GestureHandlerRootView className="flex-1 -ml-2 absolute left-0 ">
             <GestureDetector gesture={pan}>
               <Animated.View
                 style={animatedStyles}
                 className="h-[420px] w-5 bg-white opacity-50 rounded-full justify-center items-center flex-col"
+<<<<<<< HEAD
               >
                 {/* <Text className="text-gray-500 text-xs">Up</Text>
                 <Text className="text-gray-500 text-xs">Down</Text> */}
@@ -254,6 +309,13 @@ export default function App() {
         </View>
 
         <View className="w-full absolute flex-row justify-between bottom-10 px-4">
+=======
+              ></Animated.View>
+            </GestureDetector>
+          </GestureHandlerRootView>
+        </View>
+        <View className="absolute bottom-10 ml-2">
+>>>>>>> origin/main
           <TouchableOpacity
             activeOpacity={0.4}
             onPressIn={changeTarget}
@@ -263,6 +325,7 @@ export default function App() {
               style={animatedStylesChangeView}
               className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40"
             >
+<<<<<<< HEAD
               <Text className="text-white font-semibold">Change</Text>
             </Animated.View>
           </TouchableOpacity>
@@ -359,6 +422,12 @@ export default function App() {
             </TouchableOpacity>
           </View>
         </View>
+=======
+              <Text className="text-white font-semibold">Press</Text>
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
+>>>>>>> origin/main
       </View>
     </>
   );
