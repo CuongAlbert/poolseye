@@ -1,14 +1,7 @@
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import InputRange from "react-input-range";
-// import Slider;
-import Animated, {
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 
+// import Slider;
 export type AdjustProps = {
   value: number;
   changeValue: (e: number) => {};

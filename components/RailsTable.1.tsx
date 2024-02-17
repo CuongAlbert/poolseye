@@ -1,12 +1,6 @@
 import * as THREE from "three";
 import React, { useMemo } from "react";
-import {
-  TextureLoader,
-  Texture,
-  BoxGeometry,
-  Shape,
-  ExtrudeGeometry,
-} from "three";
+import { TextureLoader, Texture, BoxGeometry, Shape, ExtrudeGeometry } from "three";
 import {
   TABLE_SIZE,
   FACING_ANGLE,
@@ -24,18 +18,12 @@ import {
 export const RailsTable = function () {
   const hardWood = require("../assets/textures/tablefloor.jpg");
 
-  const railMaterial: Texture = useMemo(
-    () => new TextureLoader().load(hardWood),
-    [hardWood]
-  );
+  const railMaterial: Texture = useMemo(() => new TextureLoader().load(hardWood), [hardWood]);
   railMaterial.wrapS = THREE.RepeatWrapping;
   railMaterial.wrapT = THREE.RepeatWrapping;
   railMaterial.offset.set(0, 0);
   const cloth = require("../assets/textures/mat_ban.png");
-  const clothMaterial: Texture = useMemo(
-    () => new TextureLoader().load(cloth),
-    [cloth]
-  );
+  const clothMaterial: Texture = useMemo(() => new TextureLoader().load(cloth), [cloth]);
   // clothMaterial.offset = new Vector2(0, 1);
   clothMaterial.wrapS = THREE.RepeatWrapping;
   clothMaterial.wrapT = THREE.RepeatWrapping;
@@ -59,10 +47,7 @@ export const RailsTable = function () {
   shape2.moveTo(0, 0);
   shape2.lineTo(0, topRailSideH);
   shape2.lineTo(TABLE_SIZE.CUSHIONS_W, topRailSideH - 0.1);
-  shape2.lineTo(
-    TABLE_SIZE.CUSHIONS_W,
-    TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
-  );
+  shape2.lineTo(TABLE_SIZE.CUSHIONS_W, TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE));
 
   const shape3: Shape = new Shape();
   shape3.moveTo(0, 0);
@@ -71,10 +56,7 @@ export const RailsTable = function () {
     TABLE_SIZE.CUSHIONS_W,
     topRailTopW - TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
   );
-  shape3.lineTo(
-    TABLE_SIZE.CUSHIONS_W,
-    TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
-  );
+  shape3.lineTo(TABLE_SIZE.CUSHIONS_W, TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE));
   shape3.lineTo(0, 0);
 
   const extrudeSettings: {
@@ -95,23 +77,13 @@ export const RailsTable = function () {
     <>
       {railSideCoordinate.map((pos, idx) => (
         <mesh key={idx} args={[railSideGeometry]} position={pos}>
-          <meshStandardMaterial
-            attach="material"
-            map={railMaterial}
-            roughness={1}
-            bumpScale={1}
-          />
+          <meshStandardMaterial attach="material" map={railMaterial} roughness={1} bumpScale={1} />
         </mesh>
       ))}
 
       {railTopCoordinate.map((pos, idx) => (
         <mesh key={idx} args={[railTopGeometry]} position={pos}>
-          <meshStandardMaterial
-            attach="material"
-            map={railMaterial}
-            roughness={1}
-            bumpScale={1}
-          />
+          <meshStandardMaterial attach="material" map={railMaterial} roughness={1} bumpScale={1} />
         </mesh>
       ))}
 

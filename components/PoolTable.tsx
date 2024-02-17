@@ -7,10 +7,7 @@ import RailsTable from "./RailsTable";
 
 function PoolTable() {
   const cloth = require("../assets/textures/mat_ban.png");
-  const clothMaterial: Texture = useMemo(
-    () => new TextureLoader().load(cloth),
-    [cloth]
-  );
+  const clothMaterial: Texture = useMemo(() => new TextureLoader().load(cloth), [cloth]);
   clothMaterial.wrapS = THREE.RepeatWrapping;
   clothMaterial.wrapT = THREE.RepeatWrapping;
   clothMaterial.offset.set(0, 0);

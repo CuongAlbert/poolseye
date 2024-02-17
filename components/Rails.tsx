@@ -14,29 +14,17 @@ import {
   cushion2Coordinate,
   cushion3Coordinate,
 } from "../constants";
-import {
-  BoxGeometry,
-  MeshStandardMaterial,
-  Shape,
-  ExtrudeGeometry,
-  Texture,
-} from "three";
+import { BoxGeometry, MeshStandardMaterial, Shape, ExtrudeGeometry, Texture } from "three";
 
 const Rails = function () {
   // TOP_RAILS:
-  const woodTexture: Texture = useLoader(
-    TextureLoader,
-    "../assets/textures/hardwood_floor.jpg"
-  );
+  const woodTexture: Texture = useLoader(TextureLoader, "../assets/textures/hardwood_floor.jpg");
   const railMaterial = new MeshStandardMaterial({ map: woodTexture });
   const railSideGeometry = new BoxGeometry(...getRailSideGeometry);
   const railTopGeometry = new BoxGeometry(...getRailsTopGeometry);
 
   // CUSHIONS:
-  const clothTexture: Texture = useLoader(
-    TextureLoader,
-    "../assets/textures/cloth.jpg"
-  );
+  const clothTexture: Texture = useLoader(TextureLoader, "../assets/textures/cloth.jpg");
   const clothMaterial = new MeshStandardMaterial({ map: clothTexture });
 
   const shape1 = new Shape();
@@ -53,10 +41,7 @@ const Rails = function () {
   shape2.moveTo(0, 0);
   shape2.lineTo(0, topRailSideH);
   shape2.lineTo(TABLE_SIZE.CUSHIONS_W, topRailSideH - 0.1);
-  shape2.lineTo(
-    TABLE_SIZE.CUSHIONS_W,
-    TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
-  );
+  shape2.lineTo(TABLE_SIZE.CUSHIONS_W, TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE));
   shape2.lineTo(0, 0);
 
   const shape3 = new Shape();
@@ -66,10 +51,7 @@ const Rails = function () {
     TABLE_SIZE.CUSHIONS_W,
     topRailTopW - TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
   );
-  shape3.lineTo(
-    TABLE_SIZE.CUSHIONS_W,
-    TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE)
-  );
+  shape3.lineTo(TABLE_SIZE.CUSHIONS_W, TABLE_SIZE.CUSHIONS_W / Math.tan(FACING_ANGLE));
   shape3.lineTo(0, 0);
 
   const extrudeSettings = {
@@ -84,11 +66,7 @@ const Rails = function () {
   return (
     <>
       {railSideCoordinate.map((pos, idx) => (
-        <mesh
-          key={idx}
-          args={[railSideGeometry, railMaterial]}
-          position={pos}
-        />
+        <mesh key={idx} args={[railSideGeometry, railMaterial]} position={pos} />
       ))}
       {railTopCoordinate.map((pos, idx) => (
         <mesh key={idx} args={[railTopGeometry, railMaterial]} position={pos} />

@@ -1,18 +1,7 @@
-import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import Scene from "./view/Scene";
-import Lights from "./components/Lights";
-import Adjust from "./components/Adjust";
-
-import {
-  Text,
-  View,
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-  Image,
-} from "react-native";
-
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Animated, {
   Easing,
   SharedValue,
@@ -20,14 +9,11 @@ import Animated, {
   useDerivedValue,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import { withTiming } from "react-native-reanimated";
+import Lights from "./components/Lights";
+import Scene from "./view/Scene";
 
 export default function App() {
   const changeViewTarget: SharedValue<number> = useSharedValue(0);
@@ -131,10 +117,7 @@ export default function App() {
   }));
 
   const animatedStylesChangeView = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: 0 },
-      { scale: withTiming(touch.value === true ? 1.1 : 1) },
-    ],
+    transform: [{ translateX: 0 }, { scale: withTiming(touch.value === true ? 1.1 : 1) }],
   }));
 
   const [rotateAngle, setRotateAngle] = useState<number>(0);
@@ -144,7 +127,7 @@ export default function App() {
 
   const [count, setCount] = useState(10);
   const [barColor, setBarColor] = useState("#22c55e");
-  const [notiDisplay, setNotiDisplay] = useState("flex");
+  const [notiDisplay, setNotiDisplay] = useState<"flex" | "none">("flex");
 
   const [gameResult, setGameResult] = useState<boolean>(false);
   const [round, setRound] = useState<number>(1);
@@ -232,21 +215,21 @@ export default function App() {
       </Canvas>
 
       <View style={styles.container}>
-        <GestureHandlerRootView className="flex-1 absolute  w-full border-white opacity-0 ">
+        <GestureHandlerRootView className="absolute w-full  flex-1 border-white opacity-0 ">
           <GestureDetector gesture={pan2}>
             <Animated.View
               style={animatedStyles2}
-              className="h-screen w-full  bg-white justify-center items-center flex-col"
+              className="h-screen w-full  flex-col items-center justify-center bg-white"
             ></Animated.View>
           </GestureDetector>
         </GestureHandlerRootView>
 
-        <View className="h-1/2 top-[25%]  ml-4 flex-1  justify-end absolute bg-gray- opacity-50 rounded-full">
-          <GestureHandlerRootView className="flex-1 -ml-2 absolute left-0 ">
+        <View className="bg-gray- absolute  top-[25%] ml-4  h-1/2 flex-1 justify-end rounded-full opacity-50">
+          <GestureHandlerRootView className="absolute left-0 -ml-2 flex-1 ">
             <GestureDetector gesture={pan}>
               <Animated.View
                 style={animatedStyles}
-                className="h-[420px] w-5 bg-white opacity-50 rounded-full justify-center items-center flex-col"
+                className="h-[420px] w-5 flex-col items-center justify-center rounded-full bg-white opacity-50"
               >
                 {/* <Text className="text-gray-500 text-xs">Up</Text>
                 <Text className="text-gray-500 text-xs">Down</Text> */}
@@ -255,7 +238,7 @@ export default function App() {
           </GestureHandlerRootView>
         </View>
 
-        <View className="w-full absolute flex-row justify-between bottom-10 px-4">
+        <View className="absolute bottom-10 w-full flex-row justify-between px-4">
           <TouchableOpacity
             activeOpacity={0.4}
             onPressIn={changeTarget}
@@ -263,9 +246,9 @@ export default function App() {
           >
             <Animated.View
               style={animatedStylesChangeView}
-              className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40"
+              className="flex h-12 w-32 items-center justify-center rounded-full bg-gray-500 opacity-40"
             >
-              <Text className="text-white font-semibold">Change</Text>
+              <Text className="font-semibold text-white">Change</Text>
             </Animated.View>
           </TouchableOpacity>
 
@@ -276,8 +259,8 @@ export default function App() {
             onPress={resetCount}
             disabled={!isAutoCounting && count === 0}
           >
-            <Animated.View className="h-12 w-12 rounded-full flex items-center justify-center border-[5px] border-white opacity-40">
-              <Text className="text-white font-semibold"></Text>
+            <Animated.View className="flex h-12 w-12 items-center justify-center rounded-full border-[5px] border-white opacity-40">
+              <Text className="font-semibold text-white"></Text>
             </Animated.View>
           </TouchableOpacity>
 
@@ -288,24 +271,20 @@ export default function App() {
             onPress={startAutoCount}
             disabled={isAutoCounting || count === 0}
           >
-            <Animated.View className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 opacity-40">
-              <Text className="text-white font-semibold">Start</Text>
+            <Animated.View className="flex h-12 w-32 items-center justify-center rounded-full bg-gray-500 opacity-40">
+              <Text className="font-semibold text-white">Start</Text>
             </Animated.View>
           </TouchableOpacity>
         </View>
 
-        <View className="w-full h-14  mt-10 flex-row px-2">
-          <View className="w-20 h-20 bg-black z-[1000px] border-[3px] border-green-500 rounded-xl p-2 flex justify-center items-center">
-            <Text className="text-green-500 font-semibold uppercase text-center">
-              Round
-            </Text>
-            <Text className="text-green-500 font-bold text-4xl text-center">
-              {round}
-            </Text>
+        <View className="mt-10 h-14  w-full flex-row px-2">
+          <View className="z-[1000px] flex h-20 w-20 items-center justify-center rounded-xl border-[3px] border-green-500 bg-black p-2">
+            <Text className="text-center font-semibold uppercase text-green-500">Round</Text>
+            <Text className="text-center text-4xl font-bold text-green-500">{round}</Text>
           </View>
 
-          <View className="w-[250px] bg-gray-400/50 -ml-[10px] rounded-r-lg py-2 pr-2">
-            <View className="w-full bg-gray-800/50 rounded-full p-1">
+          <View className="-ml-[10px] w-[250px] rounded-r-lg bg-gray-400/50 py-2 pr-2">
+            <View className="w-full rounded-full bg-gray-800/50 p-1">
               <View
                 className="h-2.5 rounded-full opacity-80"
                 style={[
@@ -317,7 +296,7 @@ export default function App() {
               />
             </View>
 
-            <View className="w-full mt-1.5 bg-gray-800/50 rounded-full p-1">
+            <View className="mt-1.5 w-full rounded-full bg-gray-800/50 p-1">
               <View
                 className="h-2.5 rounded-full opacity-80"
                 style={[
@@ -332,18 +311,14 @@ export default function App() {
         </View>
 
         <View
-          className=" h-screen w-full absolute items-center justify-center"
-          style={[
-            {
-              display: notiDisplay,
-            },
-          ]}
+          className=" absolute h-screen w-full items-center justify-center"
+          style={[{ display: notiDisplay }]}
         >
-          <View className="w-[320px] h-[320px] bg-black/80 rounded-2xl border-[2.5px] border-gray-500 p-6 opacity-80">
-            <Text className="text-white text-center text-3xl font-bold mt-12 uppercase">
+          <View className="h-[320px] w-[320px] rounded-2xl border-[2.5px] border-gray-500 bg-black/80 p-6 opacity-80">
+            <Text className="mt-12 text-center text-3xl font-bold uppercase text-white">
               {gameResult ? "You Pass" : "Game Over"}
             </Text>
-            <Text className="text-center text-xl font-semibold text-white mt-2"></Text>
+            <Text className="mt-2 text-center text-xl font-semibold text-white"></Text>
 
             <TouchableOpacity
               activeOpacity={0.4}
@@ -353,8 +328,8 @@ export default function App() {
               disabled={!isAutoCounting && count === 0}
               className="mx-auto mt-12"
             >
-              <Animated.View className="h-12 w-32 rounded-full flex items-center justify-center bg-gray-500 ">
-                <Text className="text-white font-semibold">
+              <Animated.View className="flex h-12 w-32 items-center justify-center rounded-full bg-gray-500 ">
+                <Text className="font-semibold text-white">
                   {gameResult ? "Next Round" : "Play Again"}
                 </Text>
               </Animated.View>

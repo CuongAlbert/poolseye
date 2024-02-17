@@ -14,11 +14,7 @@ const getCoordinateLights = (
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
       pointLight.push(
-        new Vector3(
-          ((-(row - 1) + 2 * i) * dr) / 2,
-          ((-(col - 1) + 2 * j) * dc) / 2,
-          h
-        )
+        new Vector3(((-(row - 1) + 2 * i) * dr) / 2, ((-(col - 1) + 2 * j) * dc) / 2, h)
       );
     }
   }

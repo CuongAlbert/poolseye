@@ -12,10 +12,7 @@ export type PoolBallProps = {
 };
 
 function PoolBall({ r, position, textureURL, opacity }: PoolBallProps) {
-  const ballTexture = useMemo(
-    () => new TextureLoader().load(textureURL),
-    [textureURL]
-  );
+  const ballTexture = useMemo(() => new TextureLoader().load(textureURL), [textureURL]);
 
   const mesh = useRef(null!);
 

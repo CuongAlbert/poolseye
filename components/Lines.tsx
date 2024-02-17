@@ -1,11 +1,5 @@
 import { useLayoutEffect, useRef } from "react";
-import {
-  Vector3,
-  BufferGeometry,
-  Line,
-  LineBasicMaterial,
-  NormalBufferAttributes,
-} from "three";
+import { Vector3, BufferGeometry, Line, LineBasicMaterial, NormalBufferAttributes } from "three";
 
 export type LinesProps = {
   start: Vector3;
